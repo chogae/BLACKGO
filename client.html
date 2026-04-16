@@ -8,11 +8,9 @@
     <title>BLACK RPG</title>
     <style>
         body {
-            /* font-family: 'Consolas', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; */
             font-family: 'Noto Sans KR', sans-serif;
             background-color: #121314;
             color: #C9D1D9;
-            /* 1. 영문은 Consolas, 한글은 맑은 고딕(윈도우 표준) 적용 */
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -24,7 +22,7 @@
             overflow: hidden;
             text-align: center;
             line-height: 1;
-            /* user-select: none; */
+            user-select: none;
             font-size: 14px;
         }
 
@@ -36,47 +34,246 @@
         }
 
         div {
+            padding: 5px;
             box-sizing: border-box;
             display: flex;
             justify-content: center;
             flex-direction: column;
             align-items: center;
-            line-height: 1;
+            line-height: 1.2;
             position: relative;
             background-color: #121314;
+            gap: 5px;
         }
 
         input {
+            padding: 5px;
             box-sizing: border-box;
             display: flex;
             justify-content: center;
             flex-direction: column;
             align-items: center;
-            /* background-color: #121314; */
-            line-height: 1;
+            line-height: 1.2;
             border-radius: 10px;
             text-align: center;
         }
 
-        /* #알림 스타일 수정 */
         #알림 {
-            /* 1. 기본 스타일 */
-            /* ... 사용자님의 기존 스타일 (예: color: #F1C40F;) ... */
-
-            /* [실무 포인트] 2. 부드러운 변화 설정 (CSS Transition) */
-            /* opacity(투명도)가 변할 때 0.5초 동안 서서히 변하게 합니다. */
             transition: opacity 0.5s ease-in-out;
 
-            /* 3. 초기 상태: 완전히 보임 */
             opacity: 1;
         }
     </style>
 </head>
 
 <body>
+
     <meta name="viewport" content="width=device-width, initial-scale=0.9">
 
-    <script>
+    <script type="module">
+        import * as 정의 from "./공용정의.js";
+
+        for (const 이름 in 정의.스타일) {
+            window[이름] = 정의.스타일[이름];
+        }
+
+        document.addEventListener("dragstart", 이벤트 => 이벤트.preventDefault());
+        document.addEventListener("selectstart", 이벤트 => 이벤트.preventDefault());
+        document.addEventListener("contextmenu", 이벤트 => 이벤트.preventDefault());
+
+        window.유저 = null;
+
+        정의.객체생성(document.body, `상단바`, 밑줄, 가로꽉);
+        정의.객체생성(상단바, `상단바박스`, 가로길이(400),);
+        정의.객체생성(상단바박스, `상단바박스박스`, 양쪽,);
+        정의.객체생성(상단바박스박스, `상단바박스박스좌`, 노여백);
+        정의.객체생성(상단바박스박스좌, `상단바박스박스좌타이틀과아이디`,);
+        상단바박스박스좌타이틀과아이디.innerHTML = `BLACKGO`;
+
+        // 정의.객체생성(상단바박스박스, `상단바박스박스우`, 오른쪽, 노여백);
+        // 정의.객체생성(상단바박스박스우, `모험`,  버튼);
+        // 모험.innerHTML = `모험`;
+        // 정의.객체생성(상단바박스박스우, `장비`,  버튼);
+        // 장비.innerHTML = `장비`;
+        // 정의.객체생성(상단바박스박스우, `설정`, 버튼);
+        // 설정.innerHTML = `설정`;
+
+        정의.객체생성(document.body, `화면가리개`, 가림막,);
+
+        async function 서버요청(유형, 데이터) {
+
+            화면가리개.style.display = 'block';
+
+            try {
+                const 응답 = await fetch('/api', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 유형, 데이터 }) // 명령과 데이터를 묶어서 전송
+                });
+                return await 응답.json();
+            } catch (에러) {
+                console.error("통신 에러:", 에러);
+                return { 성공: false, 메세지: "서버 연결 실패" };
+            } finally {
+                화면가리개.style.display = 'none';
+            }
+        }
+
+        //화면초기화함수
+        function 화면초기화() {
+            const 모든화면 = document.querySelectorAll('[id$="화면박스"]');
+            모든화면.forEach(h => h.style.display = 'none');
+        }
+
+        function 알림표시(메시지) {
+            알림.style.transition = 'none';
+
+            알림.innerHTML = 메시지;
+            알림.style.opacity = 1;
+
+            if (window.알림타이머) {
+                clearTimeout(window.알림타이머);
+            }
+
+            setTimeout(() => {
+                알림.style.transition = 'opacity 0.5s';
+            }, 10);
+
+            window.알림타이머 = setTimeout(() => {
+                알림.style.opacity = 0;
+
+                setTimeout(() => {
+                    if (알림.style.opacity == 0) {
+                        알림.innerHTML = '　';
+                    }
+                }, 500);
+            }, 2500);
+        }
+
+        정의.객체생성(document.body, `알림`,);
+        알림.style.color = 정의.색상.진노;
+        알림.innerHTML = `　`;
+
+        function 메인화면함수() {
+            화면초기화();
+            알림표시('BLACKGO에 오신걸 환영합니다');
+
+            if (!window.메인화면박스) {
+                정의.객체생성(document.body, '메인화면박스', 가로길이(400), 테두리,);
+            }
+
+            메인화면박스.innerHTML = '';
+            메인화면박스.style.display = 'flex';
+
+            정의.인풋생성(메인화면박스, '아이디입력', { placeholder: '아이디를 입력하세요' },);
+            아이디입력.oninput = () => {
+                if (아이디입력.value.length >= 6) {
+                    알림표시('아이디는 6자까지만 가능합니다');
+
+                    아이디입력.value = 아이디입력.value.slice(0, 6);
+                }
+            };
+
+
+            정의.인풋생성(메인화면박스, '비번입력', { type: 'password', placeholder: '비밀번호를 입력하세요' },);
+
+
+            정의.객체생성(메인화면박스, `회원가입`, 버튼, 테두리,);
+            회원가입.innerHTML = `회원가입`;
+
+            회원가입.onclick = async () => {
+                알림표시('회원가입중');
+
+                try {
+                    const 결과 = await 서버요청('회원가입', {
+                        아이디: 아이디입력.value,
+                        비번: 비번입력.value
+                    });
+                    알림표시(결과.메세지);
+                } catch (에러) {
+                    알림표시("서버 응답 없음");
+                }
+            };
+
+
+
+            정의.객체생성(메인화면박스, `로그인`, 버튼, 테두리,);
+            로그인.innerHTML = `로그인`;
+
+        }
+
+        메인화면함수();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //외부클릭
+        window.addEventListener('click', () => {
+            if (window.설정목록) {
+                설정메뉴.style.display = 'none';
+            }
+
+            if (window.팝업컨테이너) {
+                팝업컨테이너.style.display = 'none';
+            }
+
+        });
+
+        //단축키설정
+        window.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+            // 2. 누른 키 확인 (대소문자 구분 없이 처리하기 위해 toLowerCase() 사용)
+            const key = e.key.toLowerCase();
+
+            // 3. 단축키별 매핑
+            switch (key) {
+                case 's': // 'M' 키: 모험(Adventure)
+                case 'ㄴ': // 한글 상태일 때 대비
+                    if (typeof 모험 !== 'undefined' && 모험) {
+                        모험.click();
+                    }
+                    break;
+
+                case 'a': // 'I' 키: 인벤토리(Inventory)
+                case 'ㅁ':
+                    if (typeof 타이틀과아이디 !== 'undefined') {
+                        타이틀과아이디.click();
+                    }
+                    break;
+
+                case 'q': // 'I' 키: 인벤토리(Inventory)
+                case 'ㅂ':
+                    if (typeof 탈퇴항목 !== 'undefined') {
+                        탈퇴항목.click();
+                    }
+                    break;
+
+                case 'w': // 'I' 키: 인벤토리(Inventory)
+                case 'ㅈ':
+                    if (typeof 로그아웃항목 !== 'undefined') {
+                        로그아웃항목.click();
+                    }
+                    break;
+
+                case 'escape': // ESC 키: 설정창 닫기 등
+                    break;
+            }
+        });
+
 
     </script>
 
