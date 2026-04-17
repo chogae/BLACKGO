@@ -58,6 +58,7 @@ export const 스킬목록 = Array.from({ length: 9 }, (_, i) => i + 1);
 
 
 export const 스타일 = {
+    숨기기: { display: 'none', },
     가림막: {
         position: 'fixed',
         top: 0,
@@ -66,7 +67,8 @@ export const 스타일 = {
         height: '100vh',
         zIndex: 9999,
         display: 'none',
-        cursor: 'wait'
+        cursor: 'wait',
+        backgroundColor: 'transparent',
     },
     알림점: {
         position: 'absolute',
@@ -91,6 +93,14 @@ export const 스타일 = {
         flexDirection: 'column',
         zIndex: 100,
         gap: '0px'
+    },
+    메뉴: {
+        position: 'absolute',
+        top: '100%',
+        right: '0',
+        backgroundColor: '#121314',
+        zIndex: 100,
+
     },
     가로길이: (값) => ({ width: `${값}px` }),
     세로길이: (값) => ({ height: `${값}px` }),
@@ -117,7 +127,7 @@ export const 스타일 = {
         width: '380px',
         padding: '20px',
         backgroundColor: '#1c1c1c',
-        borderRadius: '10px',
+        borderRadius: '8px',
         boxShadow: '0 0 15px rgba(0,0,0,0.5)',
         display: 'flex',
         flexDirection: 'column',

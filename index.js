@@ -91,8 +91,7 @@ app.post('/api', async (req, res) => {
 
                 const 토큰 = jwt.sign({ 아이디: 찾은유저.아이디 }, SECRET_KEY, { expiresIn: '1d' });
 
-                // 로그인 시 스탯 계산이 필요하다면 주석 해제
-                // 유저스탯계산(찾은유저);
+                유저스탯계산(찾은유저);
                 await 찾은유저.save();
 
                 return res.json({ 성공: true, 데이터: 찾은유저, 토큰: 토큰 });
