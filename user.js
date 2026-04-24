@@ -6,86 +6,146 @@ const 유저스키마 = new mongoose.Schema({
     아이디: { type: String, required: true, unique: true, trim: true },
     비밀번호: { type: String, required: true },
 
-    현재스태미너: { type: Number, default: 30 },
-    최대스태미너: { type: Number, default: 30 },
+    생성정보: {
+        날짜: String,
+        요일: String,
+        시각: String,
+        타임스탬프: {
+            시: Number,
+            분: Number,
+            초: Number
+        },
+        IP: { type: String, default: "" },
+    },
+    최근접속: {
+        날짜: String,
+        요일: String,
+        시각: String,
+        타임스탬프: {
+            시: Number,
+            분: Number,
+            초: Number
+        },
+        IP: { type: String, default: "" },
+    },
+
+    현재스태미너: { type: Number, default: 1500 },
+    최대스태미너: { type: Number, default: 1500 },
     총스태미너: { type: Number, default: 0 },
 
     현재골드: { type: Number, default: 0 },
     총골드: { type: Number, default: 0 },
-    현재다이아: { type: Number, default: 0 },
-    총다이아: { type: Number, default: 0 },
+
+    현재루비: { type: Number, default: 0 },
+    총루비: { type: Number, default: 0 },
 
     접속일: { type: Number, default: 1 },
 
+    주인장: { type: Number, default: 0 },
+
+    악마성: { type: Number, default: 1 },
+    최고층: { type: Number, default: 1 },
+    히든: { type: Number, default: 0 },
+
+    전투력: { type: Number, default: 0 },
+
+    //스탯
     체력: { type: Number, default: 400 },
     공격력: { type: Number, default: 90 },
     방어력: { type: Number, default: 25 },
-    전투력: { type: Number, default: 0 },
+    속력: { type: Number, default: 10 },
+    치명: { type: Number, default: 10 },
+    치명계수: { type: Number, default: 150 },
+    회복: { type: Number, default: 10 },
+    회복계수: { type: Number, default: 15 },
 
-    보너스체력: { type: Number, default: 0 },
-    보너스공격력: { type: Number, default: 0 },
-    보너스방어력: { type: Number, default: 0 },
-    치명타확률: { type: Number, default: 0 },
-    치명타데미지: { type: Number, default: 0 },
+    //보너스스탯
+    생명: { type: Number, default: 100 },
+    힘: { type: Number, default: 100 },
+    인내: { type: Number, default: 100 },
+    민첩: { type: Number, default: 100 },
+    운: { type: Number, default: 100 },
+    감각: { type: Number, default: 100 },
+    지능: { type: Number, default: 100 },
+    정신: { type: Number, default: 100 },
 
+    생명최대치: { type: Number, default: 100 },
+    힘최대치: { type: Number, default: 100 },
+    인내최대치: { type: Number, default: 100 },
+    민첩최대치: { type: Number, default: 100 },
+    운최대치: { type: Number, default: 100 },
+    감각최대치: { type: Number, default: 100 },
+    지능최대치: { type: Number, default: 100 },
+    정신최대치: { type: Number, default: 100 },
+
+    생명체크: { type: Number, default: 0 },
+    힘체크: { type: Number, default: 0 },
+    인내체크: { type: Number, default: 0 },
+    민첩체크: { type: Number, default: 0 },
+    운체크: { type: Number, default: 0 },
+    감각체크: { type: Number, default: 0 },
+    지능체크: { type: Number, default: 0 },
+    정신체크: { type: Number, default: 0 },
+
+    현재체력: { type: Number, default: 0 },
     최종체력: { type: Number, default: 0 },
     최종공격력: { type: Number, default: 0 },
     최종방어력: { type: Number, default: 0 },
+    최종속력: { type: Number, default: 0 },
+    최종치명: { type: Number, default: 0 },
+    최종치명계수: { type: Number, default: 0 },
+    최종회복: { type: Number, default: 0 },
+    최종회복계수: { type: Number, default: 0 },
 
-    챕터정보: {
-        챕터: { type: Number, default: 1 },
-        진행: { type: Number, default: 0 },
-        레벨: { type: Number, default: 1 },
-        레벨업: { type: Number, default: 0 },
-        획득경험치: { type: Number, default: 0 },
-        획득골드: { type: Number, default: 0 },
-        경험치: { type: Number, default: 0 },
-        최고생존일수: { type: Number, default: 1 },
-        일수: { type: Number, default: 1 },
-        이벤트: { type: Number, default: 0 },
-        챕터현재체력: { type: Number, default: 0 },
-        챕터최대체력: { type: Number, default: 0 },
-        챕터공격력: { type: Number, default: 0 },
-        챕터방어력: { type: Number, default: 0 },
-        분노: { type: Number, default: 0 },
-
-        몬스터생성: { type: Number, default: 0 },
-        몬스터체력: { type: Number, default: 0 },
-        몬스터공격력: { type: Number, default: 0 },
-        몬스터방어력: { type: Number, default: 0 },
-        몬스터현재분노: { type: Number, default: 0 },
-        몬스터최대분노: { type: Number, default: 0 },
-
-        일번레벨업스킬: { type: Number, default: 0 },
-        이번레벨업스킬: { type: Number, default: 0 },
-        삼번레벨업스킬: { type: Number, default: 0 },
-
-        챕터스킬: {
-            검기: { type: Number, default: 0 },
-            화염: { type: Number, default: 0 },
-            번개: { type: Number, default: 0 },
-            수리검: { type: Number, default: 0 },
-        },
-    },
-
-    발동스킬: {
-        검기: { type: Number, default: 0 },
-        화염: { type: Number, default: 0 },
+    스킬: {
         번개: { type: Number, default: 0 },
         수리검: { type: Number, default: 0 },
+        보호막: { type: Number, default: 0 },
+        얼음가시: { type: Number, default: 0 },
+        광창: { type: Number, default: 0 },
+        화염파: { type: Number, default: 0 },
+
+        강타: { type: Number, default: 0 },
+        연타: { type: Number, default: 0 },
+        강인: { type: Number, default: 0 },
+        흡혈: { type: Number, default: 0 },
+        회복: { type: Number, default: 0 },
+
     },
 
     장비: [{
         이름: { type: String, required: true },
         유형: { type: String, required: true },
         스킬: { type: String, default: "" },
-        등급: { type: Number, default: 1 },
+        등급: { type: Number, default: 0 },
         레벨: { type: Number, default: 1 },
         장착: { type: Number, default: 0 },
+
         체력: { type: Number, default: 0 },
         공격력: { type: Number, default: 0 },
         방어력: { type: Number, default: 0 },
-    }]
+        속력: { type: Number, default: 0 },
+
+        치명: { type: Number, default: 0 },
+        치명계수: { type: Number, default: 0 },
+        회복: { type: Number, default: 0 },
+        회복계수: { type: Number, default: 0 },
+    }],
+
+    장비슬롯: {
+        무기레벨: { type: Number, default: 0 },
+        방어구레벨: { type: Number, default: 0 },
+        장갑레벨: { type: Number, default: 0 },
+        신발레벨: { type: Number, default: 0 },
+        목걸이레벨: { type: Number, default: 0 },
+        반지레벨: { type: Number, default: 0 },
+    },
+
+}, {
+    timestamps: {
+        createdAt: '생성일시',
+        updatedAt: '수정일시'
+    }
 });
 
 유저스키마.pre('save', async function () {
