@@ -39,6 +39,9 @@ const 유저스키마 = new mongoose.Schema({
     현재루비: { type: Number, default: 0 },
     총루비: { type: Number, default: 0 },
 
+    현재숙련도: { type: Number, default: 0 },
+    총숙련도: { type: Number, default: 0 },
+
     접속일: { type: Number, default: 1 },
 
     주인장: { type: Number, default: 0 },
@@ -132,14 +135,21 @@ const 유저스키마 = new mongoose.Schema({
         회복계수: { type: Number, default: 0 },
     }],
 
-    장비슬롯: {
-        무기레벨: { type: Number, default: 0 },
-        방어구레벨: { type: Number, default: 0 },
-        장갑레벨: { type: Number, default: 0 },
-        신발레벨: { type: Number, default: 0 },
-        목걸이레벨: { type: Number, default: 0 },
-        반지레벨: { type: Number, default: 0 },
-    },
+    무기슬롯: { type: Number, default: 0 },
+    방어구슬롯: { type: Number, default: 0 },
+    장갑슬롯: { type: Number, default: 0 },
+    신발슬롯: { type: Number, default: 0 },
+    목걸이슬롯: { type: Number, default: 0 },
+    반지슬롯: { type: Number, default: 0 },
+
+    인벤토리: [
+        {
+            이름: { type: String, required: true },
+            등급: { type: Number, default: 0 },
+            효과: { type: String, required: true },
+
+        }
+    ],
 
 }, {
     timestamps: {
