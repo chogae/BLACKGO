@@ -81,6 +81,15 @@ const 유저스키마 = new mongoose.Schema({
     지능최대치: { type: Number, default: 100 },
     정신최대치: { type: Number, default: 100 },
 
+    생명물약최대치: { type: Number, default: 0 },
+    힘물약최대치: { type: Number, default: 0 },
+    인내물약최대치: { type: Number, default: 0 },
+    민첩물약최대치: { type: Number, default: 0 },
+    운물약최대치: { type: Number, default: 0 },
+    감각물약최대치: { type: Number, default: 0 },
+    지능물약최대치: { type: Number, default: 0 },
+    정신물약최대치: { type: Number, default: 0 },
+
     생명체크: { type: Number, default: 0 },
     힘체크: { type: Number, default: 0 },
     인내체크: { type: Number, default: 0 },
@@ -124,6 +133,10 @@ const 유저스키마 = new mongoose.Schema({
         레벨: { type: Number, default: 1 },
         장착: { type: Number, default: 0 },
 
+        현재내구도: { type: Number, default: 0 },
+        최대내구도: { type: Number, default: 0 },
+
+
         체력: { type: Number, default: 0 },
         공격력: { type: Number, default: 0 },
         방어력: { type: Number, default: 0 },
@@ -135,12 +148,12 @@ const 유저스키마 = new mongoose.Schema({
         회복계수: { type: Number, default: 0 },
     }],
 
-    무기슬롯: { type: Number, default: 0 },
-    방어구슬롯: { type: Number, default: 0 },
-    장갑슬롯: { type: Number, default: 0 },
-    신발슬롯: { type: Number, default: 0 },
-    목걸이슬롯: { type: Number, default: 0 },
-    반지슬롯: { type: Number, default: 0 },
+    무기슬롯: { type: Number, default: 0 }, //공
+    방어구슬롯: { type: Number, default: 0 }, //방
+    장갑슬롯: { type: Number, default: 0 }, //속
+    신발슬롯: { type: Number, default: 0 }, //체
+    목걸이슬롯: { type: Number, default: 0 }, //치 치계
+    반지슬롯: { type: Number, default: 0 }, //회 회계
 
     인벤토리: [
         {
