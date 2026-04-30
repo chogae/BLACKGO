@@ -65,17 +65,6 @@ export function 셔플(목록) {
     return 목록;
 }
 
-// export function 객체생성(부모, 이름, ...스타일들) {
-//     const 엘리먼트 = document.createElement('div');
-
-//     엘리먼트.id = 이름;
-//     Object.assign(엘리먼트.style, ...스타일들);
-
-//     window[이름] = 엘리먼트;
-//     if (부모) 부모.appendChild(엘리먼트);
-
-//     return 엘리먼트;
-// }
 
 export function 객체생성(부모, 이름, ...스타일들) {
 
@@ -99,6 +88,33 @@ export function 객체생성(부모, 이름, ...스타일들) {
             }
         }, 지속시간 * 1000); // 초 단위를 밀리초로 변환
     }
+
+    let 열개수 = 0;
+
+    스타일들.forEach(인자 => {
+        if (typeof 인자 === 'object' && 인자 !== null) {
+            // 1. 만약 className 속성이 있다면 클래스로 추가
+            if (인자.className) {
+                엘리먼트.classList.add(인자.className);
+            }
+
+            else {
+                // ★ '열' 속성이 있는지 확인
+                if (인자.columnCount) {
+                    열개수 = 인자.columnCount;
+                }
+                Object.assign(엘리먼트.style, 인자);
+            }
+        }
+        else if (typeof 인자 === 'string') {
+            if (스타일.색상 && 스타일.색상[인자]) {
+                엘리먼트.style.color = 스타일.색상[인자];
+            }
+            else {
+                엘리먼트.style.color = 인자;
+            }
+        }
+    });
 
     // 3. 숫자를 제외한 나머지 '객체'들만 스타일로 적용합니다.
     const 실제스타일들 = 스타일들.filter(인자 => typeof 인자 === 'object');
@@ -192,7 +208,6 @@ export const 스타일 = {
         left: 0,
         width: '100vw',
         height: '100vh',
-        zIndex: 9999,
         display: 'none',
         cursor: 'wait',
         backgroundColor: 'transparent',
@@ -203,41 +218,21 @@ export const 스타일 = {
         right: '0px',
         backgroundColor: '#FF0000',
         borderRadius: '50%',
-        zIndex: 10,
         display: 'none'
-    },
-    설정영역: {
-        position: 'relative',
-        display: 'inline-block'
-    },
-    설정메뉴창: {
-        position: 'absolute',
-        top: '100%',
-        right: '0',
-        backgroundColor: '#121314',
-        minWidth: '100px',
-        display: 'none',
-        flexDirection: 'column',
-        zIndex: 100,
-        gap: '0px'
     },
     메뉴: {
         position: 'absolute',
         top: '100%',
         right: '0',
         backgroundColor: '#121314',
-        zIndex: 100,
-
     },
-    가로길이: (값) => ({ width: `${값}px` }),
-    세로길이: (값) => ({ height: `${값}px` }),
-    정사각형: (값) => ({ width: `${값}px`, height: `${값}px` }),
+    가로: (값) => ({ width: `${값}px` }),
+    세로: (값) => ({ height: `${값}px` }),
+    사각형: (값) => ({ width: `${값}px`, height: `${값}px` }),
     투명도: (값) => ({ opacity: 값 }),
-    설정항목: {
-        cursor: 'pointer',
-        width: '100%',
-        textAlign: 'center'
-    },
+    제트: (값) => ({ zIndex: 값 }),
+    플렉스: (값) => ({ flex: 값 }),
+
     팝업배경: {
         position: 'fixed',
         top: 0,
@@ -248,7 +243,6 @@ export const 스타일 = {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        zIndex: 1000
     },
     팝업창: {
         width: '380px',
@@ -276,6 +270,15 @@ export const 스타일 = {
         width: '100%',
         textAlign: 'right'
     },
+
+    가로정렬: {
+        display: 'flex',
+        flexDirection: 'row',
+    },
+    세로정렬: {
+        alignItems: 'flex-start',
+        // justifyContent: `flex-start`,
+    },
     중앙: {
         display: 'flex',
         flexDirection: 'row',
@@ -288,10 +291,7 @@ export const 스타일 = {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        width: '100%'
-    },
-    세로정렬: {
-        flexDirection: 'column'
+        width: '100%',
     },
     가로꽉: {
         width: '100%'
@@ -301,16 +301,26 @@ export const 스타일 = {
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        zIndex: 99999,
     },
-    여백: { padding: '10px', },
+    여백: { padding: '5px', },
     노여백: { padding: '0px', },
-    // 여백: { padding: '5px', margin: '5px' },
-    큰여백: { padding: '10px', margin: '10px' },
-    테두리: { border: '1px solid #8B949E', borderRadius: '8px' },
-    밑줄: { borderBottom: '1px solid #8B949E' },
+    큰여백: { padding: '10px', },
+    테두리: {
+        border: '1px solid #8B949E',
+        borderRadius: '10px',
+
+    },
+    밑줄: {
+        borderBottom: '1px solid #8B949E',
+        borderRadius: `0px`,
+    },
+    윗줄: { borderTop: '1px solid #8B949E' },
     컨테이너: { maxWidth: '400px', width: '400px' },
 
+    최상단: {
+        position: 'fixed',
+        top: 0,
+    },
     좌상단: {
         position: 'absolute',
         top: '5px',
@@ -333,9 +343,16 @@ export const 스타일 = {
     },
     버튼: {
         cursor: 'pointer',
+        className: `버튼`,
+        borderRadius: '10px',
+        padding: `5px`,
     },
     작은글씨: {
         fontSize: '12px'
+    },
+
+    큰글씨: {
+        fontSize: '16px'
     },
 
     테두리마력: (색상 = '#C9D1D9') => ({
@@ -350,9 +367,13 @@ export const 스타일 = {
         textShadow: `0 0 3px ${색상}`,
     }),
 
+    열: (개수) => ({ columnCount: 개수 }),
 
+    // 스타일 객체에 추가
+    노줄: { whiteSpace: 'nowrap' },
 
 };
+
 
 // 2. 브라우저 로드시 자동 실행 (이게 있으면 따로 등록 안 해도 됨)
 if (typeof document !== 'undefined') {
@@ -376,6 +397,17 @@ if (typeof document !== 'undefined') {
 }
 
 export const 색상 = {
+    빨강: '#FF0000', // Red
+    주황: '#FFA500', // Orange
+    노랑: '#FFFF00', // Yellow
+    초록: '#008000', // Green
+    파랑: '#0000FF', // Blue
+    남색: '#4B0082', // Indigo
+    보라: '#800080', // Purple (Violet)
+    검정: '#000000',
+    흰색: '#FFFFFF',
+    회색: '#808080',
+
     배경: '#121314',
     글자: '#C9D1D9',
     주석: '#8B949E',
@@ -426,12 +458,6 @@ export const 등급테이블 = [
         이름: `일반`,
         색상: '#C9D1D9',
         몬스터: `CXIII. 릴리트`,
-        아이템: [
-            {
-                이름: `흙상자`,
-                효과: `낡은 장비가 들어있다`,
-            },
-        ],
     },
 
     {
@@ -559,7 +585,7 @@ export const 등급테이블 = [
         아이템: [
             {
                 이름: `공허지기`,
-                효과: `????????????????`,
+                효과: `??????`
             },
 
         ],
@@ -567,29 +593,70 @@ export const 등급테이블 = [
 
 ];
 
-export const 스탯테이블 = [
-    `생명`,
-    `힘`,
-    `인내`,
-    `민첩`,
-    `운`,
-    `감각`,
-    `지능`,
-    `정신`,
+// export const 등급확률표 = {
+//     1: 362880,
+//     2: 40320,
+//     3: 5040,
+//     4: 720,
+//     5: 120,
+//     6: 24,
+//     7: 6,
+//     8: 2,
+//     9: 1,
+
+// };
+
+export const 등급확률표 = (인자) => {
+    return {
+        1: 362880 * 인자,
+        2: 40320 * Math.pow(인자, 1.5),
+        3: 5040 * Math.pow(인자, 2),
+        4: 720 * Math.pow(인자, 2.5),
+        5: 120 * Math.pow(인자, 3),
+        6: 24 * Math.pow(인자, 3.5),
+        7: 6 * Math.pow(인자, 4),
+        8: 2 * Math.pow(인자, 4.5),
+        9: 1 * Math.pow(인자, 5)
+    };
+};
+
+export const 아이템확률표 = (인자) => {
+    return {
+        1: 65536 * 인자,
+        2: 16384 * Math.pow(인자, 1.5),
+        3: 4096 * Math.pow(인자, 2),
+        4: 1024 * Math.pow(인자, 2.5),
+        5: 256 * Math.pow(인자, 3),
+        6: 64 * Math.pow(인자, 3.5),
+        7: 16 * Math.pow(인자, 4),
+        8: 4 * Math.pow(인자, 4.5),
+        9: 1 * Math.pow(인자, 5)
+    };
+};
+
+const 보상 = [
+    () => {
+        let 히든숙련도 = 숫자뽑기(100, 500);
+        유저.현재숙련도 += 히든숙련도;
+        유저.총숙련도 += 히든숙련도;
+        히든보상 = `보너스 숙련도 ${히든숙련도} 획득!`;
+
+    },
+    () => {
+        let 히든골드 = 100 * 숫자뽑기(유저.악마성 * 80, 유저.악마성 * 120);
+        유저.현재골드 += 히든골드;
+        유저.총골드 += 히든골드;
+        히든보상 = `보너스 골드 ${히든골드} 획득!`;
+
+    },
+    () => {
+        let 히든루비 = 숫자뽑기(10, 30);
+        유저.현재루비 += 히든루비;
+        유저.총루비 += 히든루비;
+        히든보상 = `보너스 루비 ${히든루비} 획득!`;
+    },
 ];
 
-export const 등급확률표 = {
-    1: 362880,
-    2: 40320,
-    3: 5040,
-    4: 720,
-    5: 120,
-    6: 24,
-    7: 6,
-    8: 2,
-    9: 1,
-
-};
 
 export const 주인장등급확률표 = {
     1: 1,
@@ -606,7 +673,7 @@ export const 주인장등급확률표 = {
 
 export const 일반몬스터 = [
     "I. 디나르", "II. 에리곤", "III. 도레알", "IV. 크로셀", "V. 루페스", "VI. 벨", "VII. 시에르", "VIII. 세레우스", "IX. 버알베리스", "X. 발라크",
-    "XI. 로노베", "XII. 자간", "XIII. 안드라멜리우스", "XIV. 니βε로스", "XV. 에이몬", "XVI. 라에스", "XVII. 아라타바", "XVIII. 바티바스", "XIX. 아몬", "XX. 안드로말리우스",
+    "XI. 로노베", "XII. 자간", "XIII. 안드라멜리우스", "XIV. 니로스", "XV. 에이몬", "XVI. 라에스", "XVII. 아라타바", "XVIII. 바티바스", "XIX. 아몬", "XX. 안드로말리우스",
     "XXI. 바피메트", "XXII. 오로이아스", "XXIII. 오세", "XXIV. 아미", "XXV. 데카브리아", "XXVI. 벨리알", "XXVII. 디카리브", "XXVIII. 세이르", "XXIX. 오로버스", "XXX. 무루무르",
     "XXXI. 카이미", "XXXII. 알로세스", "XXXIII. 샤르나크", "XXXIV. 샤크", "XXXV. 사브낙", "XXXVI. 라하브", "XXXVII. 말포르스", "XXXVIII. 하우레스", "XXXIX. 피닉스", "XL. 바알",
     "XLI. 푸르카스", "XLII. 가프", "XLIII. 아스모데우스", "XLIV. 포르카스", "XLV. 보락스", "XLVI. 글라시아라볼라스", "XLVII. 나베리우스", "XLVIII. 아이몬", "XLIX. 프루푸스", "L. 살로스",
@@ -631,7 +698,7 @@ export const 히든몬스터 = [
 export const 접두사 = [
     [``],
 
-    ["낡은", "허름한", "불량", "깨진", "금간", "먼지쌓인", "녹슨", "뒤틀린", "악취나는", "쓸모없는"],
+    ["낡은", "허름한", "불량", "깨진", "먼지쌓인", "녹슨", "뒤틀린", "악취나는", "쓸모없는"],
 
 
     ["평범한", "흔한", "조잡한", "거친", "무딘", "가벼운", "나무", "투박한", "연습용", "기본"],
@@ -656,4 +723,36 @@ export const 접두사 = [
 
 
     ["성역의", "신의권능", "세상의끝", "무의영역", "삼라만상", "절대신", "영생의", "최초의빛", "우주근원", "종말의"]
+];
+
+export const 장비명 = {
+    "무기": ["검", "활", "지팡이", "도끼", "단검", "창", "둔기", "총",],
+
+    "방어구": ["갑옷", "로브", "코트", "흉갑", "도복", "플레이트", "메일", "슈트"],
+
+    "장갑": ["장갑", "건틀릿", "핸드글러브", "브레이서"],
+
+    "신발": ["장화", "부츠", "샌들", "그리브", "워커",],
+
+    "목걸이": ["목걸이", "펜던트", "초커", "아뮬렛",],
+
+    "반지": ["반지", "링", "고리",]
+};
+
+export const 스탯테이블 = {
+    "기본스탯": [`체력`, `공격력`, `방어력`, `속력`, `치명`, `치명계수`, `회복`, `회복계수`,],
+    "어빌리티스탯": [`생명`, `힘`, `인내`, `민첩`, `운`, `감각`, `지능`, `정신`,],
+    "최대치스탯": [`생명최대치`, `힘최대치`, `인내최대치`, `민첩최대치`, `운최대치`, `감각최대치`, `지능최대치`, `정신최대치`,],
+    "물약스탯": [`생명물약최대치`, `힘물약최대치`, `인내물약최대치`, `민첩물약최대치`, `운물약최대치`, `감각물약최대치`, `지능물약최대치`, `정신물약최대치`,],
+    "최종스탯": [`최종체력`, `최종공격력`, `최종방어력`, `최종속력`, `최종치명`, `최종치명계수`, `최종회복`, `최종회복계수`,],
+
+};
+
+export const 장비테이블 = {
+    "유형": [`무기`, `장갑`, `목걸이`, `방어구`, `신발`, `반지`,],
+    "슬롯": [`무기슬롯`, `장갑슬롯`, `목걸이슬롯`, `방어구슬롯`, `신발슬롯`, `반지슬롯`,],
+};
+
+export const 스킬테이블 = [
+    `번개`, `수리검`, `보호막`, `얼음가시`, `광창`, `화염파`, `강타`, `강인`, `흡혈`,
 ];

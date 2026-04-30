@@ -6,28 +6,21 @@ const 유저스키마 = new mongoose.Schema({
     아이디: { type: String, required: true, unique: true, trim: true },
     비밀번호: { type: String, required: true },
 
-    생성정보: {
-        날짜: String,
-        요일: String,
-        시각: String,
-        타임스탬프: {
-            시: Number,
-            분: Number,
-            초: Number
-        },
-        IP: { type: String, default: "" },
-    },
-    최근접속: {
-        날짜: String,
-        요일: String,
-        시각: String,
-        타임스탬프: {
-            시: Number,
-            분: Number,
-            초: Number
-        },
-        IP: { type: String, default: "" },
-    },
+    생성날짜: { type: String },
+    생성요일: { type: String },
+    생성시각: { type: String },
+    생성시: { type: Number },
+    생성분: { type: Number },
+    생성초: { type: Number },
+    생성IP: { type: String, default: "" },
+
+    접속날짜: { type: String },
+    접속요일: { type: String },
+    접속시각: { type: String },
+    접속시: { type: Number },
+    접속분: { type: Number },
+    접속초: { type: Number },
+    접속IP: { type: String, default: "" },
 
     현재스태미너: { type: Number, default: 1500 },
     최대스태미너: { type: Number, default: 1500 },
@@ -41,6 +34,9 @@ const 유저스키마 = new mongoose.Schema({
 
     현재숙련도: { type: Number, default: 0 },
     총숙련도: { type: Number, default: 0 },
+
+    현재가루: { type: Number, default: 0 },
+    총가루: { type: Number, default: 0 },
 
     접속일: { type: Number, default: 1 },
 
@@ -121,7 +117,6 @@ const 유저스키마 = new mongoose.Schema({
         연타: { type: Number, default: 0 },
         강인: { type: Number, default: 0 },
         흡혈: { type: Number, default: 0 },
-        회복: { type: Number, default: 0 },
 
     },
 
@@ -146,6 +141,21 @@ const 유저스키마 = new mongoose.Schema({
         치명계수: { type: Number, default: 0 },
         회복: { type: Number, default: 0 },
         회복계수: { type: Number, default: 0 },
+
+        스킬: {
+            번개: { type: Number, default: 0 },
+            수리검: { type: Number, default: 0 },
+            보호막: { type: Number, default: 0 },
+            얼음가시: { type: Number, default: 0 },
+            광창: { type: Number, default: 0 },
+            화염파: { type: Number, default: 0 },
+
+            강타: { type: Number, default: 0 },
+            연타: { type: Number, default: 0 },
+            강인: { type: Number, default: 0 },
+            흡혈: { type: Number, default: 0 },
+        },
+
     }],
 
     무기슬롯: { type: Number, default: 0 }, //공
