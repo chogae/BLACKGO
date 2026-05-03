@@ -1790,6 +1790,10 @@
                 주인장화면모든계정삭제.onclick = async (e) => {
                     e.stopPropagation();
 
+
+                    const 확인 = await 팝업(`모든 데이터를 삭제하시겠습니까?`);
+                    if (!확인) return;
+
                     const 결과 = await 서버요청('모든계정삭제', {
                         토큰: 접속토큰,
                     });
