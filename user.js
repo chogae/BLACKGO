@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
+import * as 정의 from "./공용정의.js";
 
 const 유저스키마 = new mongoose.Schema({
-    // 필수 정보
     아이디: { type: String, required: true, unique: true, trim: true },
     비밀번호: { type: String, required: true },
 
@@ -22,155 +22,125 @@ const 유저스키마 = new mongoose.Schema({
     접속초: { type: Number },
     접속IP: { type: String, default: "" },
 
-    현재스태미너: { type: Number, default: 1500 },
-    최대스태미너: { type: Number, default: 1500 },
+    주인장: { type: Number, default: 0 },
+
+    현재스태미너: { type: Number, default: 30 },
+    최대스태미너: { type: Number, default: 30 },
     총스태미너: { type: Number, default: 0 },
 
     현재골드: { type: Number, default: 0 },
     총골드: { type: Number, default: 0 },
 
-    현재루비: { type: Number, default: 0 },
-    총루비: { type: Number, default: 0 },
+    현재다이아: { type: Number, default: 0 },
+    총다이아: { type: Number, default: 0 },
 
-    현재숙련도: { type: Number, default: 0 },
-    총숙련도: { type: Number, default: 0 },
-
-    현재가루: { type: Number, default: 0 },
-    총가루: { type: Number, default: 0 },
-
-    접속일: { type: Number, default: 1 },
-
-    주인장: { type: Number, default: 0 },
-
-    악마성: { type: Number, default: 1 },
-    최고층: { type: Number, default: 1 },
-    히든: { type: Number, default: 0 },
-
-    전투력: { type: Number, default: 0 },
-
-    //스탯
-    체력: { type: Number, default: 400 },
-    공격력: { type: Number, default: 90 },
-    방어력: { type: Number, default: 25 },
-    속력: { type: Number, default: 10 },
-    치명: { type: Number, default: 10 },
-    치명계수: { type: Number, default: 150 },
-    회복: { type: Number, default: 10 },
-    회복계수: { type: Number, default: 15 },
-
-    //보너스스탯
-    생명: { type: Number, default: 100 },
-    힘: { type: Number, default: 100 },
-    인내: { type: Number, default: 100 },
-    민첩: { type: Number, default: 100 },
-    운: { type: Number, default: 100 },
-    감각: { type: Number, default: 100 },
-    지능: { type: Number, default: 100 },
-    정신: { type: Number, default: 100 },
-
-    생명최대치: { type: Number, default: 100 },
-    힘최대치: { type: Number, default: 100 },
-    인내최대치: { type: Number, default: 100 },
-    민첩최대치: { type: Number, default: 100 },
-    운최대치: { type: Number, default: 100 },
-    감각최대치: { type: Number, default: 100 },
-    지능최대치: { type: Number, default: 100 },
-    정신최대치: { type: Number, default: 100 },
-
-    생명물약최대치: { type: Number, default: 0 },
-    힘물약최대치: { type: Number, default: 0 },
-    인내물약최대치: { type: Number, default: 0 },
-    민첩물약최대치: { type: Number, default: 0 },
-    운물약최대치: { type: Number, default: 0 },
-    감각물약최대치: { type: Number, default: 0 },
-    지능물약최대치: { type: Number, default: 0 },
-    정신물약최대치: { type: Number, default: 0 },
-
-    생명체크: { type: Number, default: 0 },
-    힘체크: { type: Number, default: 0 },
-    인내체크: { type: Number, default: 0 },
-    민첩체크: { type: Number, default: 0 },
-    운체크: { type: Number, default: 0 },
-    감각체크: { type: Number, default: 0 },
-    지능체크: { type: Number, default: 0 },
-    정신체크: { type: Number, default: 0 },
-
-    현재체력: { type: Number, default: 0 },
-    최종체력: { type: Number, default: 0 },
-    최종공격력: { type: Number, default: 0 },
-    최종방어력: { type: Number, default: 0 },
-    최종속력: { type: Number, default: 0 },
-    최종치명: { type: Number, default: 0 },
-    최종치명계수: { type: Number, default: 0 },
-    최종회복: { type: Number, default: 0 },
-    최종회복계수: { type: Number, default: 0 },
-
-    스킬: {
-        번개: { type: Number, default: 0 },
-        수리검: { type: Number, default: 0 },
-        보호막: { type: Number, default: 0 },
-        얼음가시: { type: Number, default: 0 },
-        광창: { type: Number, default: 0 },
-        화염파: { type: Number, default: 0 },
-
-        강타: { type: Number, default: 0 },
-        연타: { type: Number, default: 0 },
-        강인: { type: Number, default: 0 },
-        흡혈: { type: Number, default: 0 },
+    특성: {
+        체력: { type: Number, default: 0 },
+        공격력: { type: Number, default: 0 },
+        방어력: { type: Number, default: 0 },
+    },
+    계정: {
+        ...정의.계정스탯스키마,
+    },
+    최종: {
+        ...정의.스탯스키마,
 
     },
-
     장비: [{
         이름: { type: String, required: true },
         유형: { type: String, required: true },
-        스킬: { type: String, default: "" },
+        스킬: [{
+            이름: { type: String },
+            등급: { type: Number },
+            레벨: { type: Number, default: 1 }
+        }],
         등급: { type: Number, default: 0 },
         레벨: { type: Number, default: 1 },
         장착: { type: Number, default: 0 },
 
-        현재내구도: { type: Number, default: 0 },
-        최대내구도: { type: Number, default: 0 },
+        ...정의.스탯스키마,
+    }],
+    모험: {
+        ...정의.스탯스키마,
 
+        //초기화x
+        챕터: { type: Number, default: 1 },
+        최고생존일수: { type: Number, default: 1 },
 
-        체력: { type: Number, default: 0 },
-        공격력: { type: Number, default: 0 },
-        방어력: { type: Number, default: 0 },
-        속력: { type: Number, default: 0 },
+        //초기화 0
+        진행: { type: Number, default: 0 },
+        몬스터: { type: Number, default: 0 },
+        경험치: { type: Number, default: 0 },
+        일반: { type: Number, default: 0 },
+        히든: { type: Number, default: 0 },
+        현재체력: { type: Number, default: 0 },
+        최대체력: { type: Number, default: 0 },
 
-        치명: { type: Number, default: 0 },
-        치명계수: { type: Number, default: 0 },
-        회복: { type: Number, default: 0 },
-        회복계수: { type: Number, default: 0 },
+        //초기화 1
+        현재일수: { type: Number, default: 1 },
+        레벨: { type: Number, default: 1 },
 
-        스킬: {
-            번개: { type: Number, default: 0 },
-            수리검: { type: Number, default: 0 },
-            보호막: { type: Number, default: 0 },
-            얼음가시: { type: Number, default: 0 },
-            광창: { type: Number, default: 0 },
-            화염파: { type: Number, default: 0 },
+        //초기화 ""
+        이벤트: { type: String, default: "" },
 
-            강타: { type: Number, default: 0 },
-            연타: { type: Number, default: 0 },
-            강인: { type: Number, default: 0 },
-            흡혈: { type: Number, default: 0 },
+        스킬: [{
+            이름: { type: String },
+            등급: { type: Number },
+            레벨: { type: Number, default: 1 }
+        }],
+
+        스킬뽑기: {
+            일번스킬: {
+                이름: { type: String, default: "" },
+                등급: { type: Number, default: 0 },
+                효과: { type: String, default: "" },
+            },
+            이번스킬: {
+                이름: { type: String, default: "" },
+                등급: { type: Number, default: 0 },
+                효과: { type: String, default: "" },
+            },
+            삼번스킬: {
+                이름: { type: String, default: "" },
+                등급: { type: Number, default: 0 },
+                효과: { type: String, default: "" },
+            },
+
         },
 
-    }],
+        획득스킬: {
+            이름: { type: String, default: "" },
+            등급: { type: Number, default: 0 },
+            효과: { type: String, default: "" },
+        },
+    },
 
-    무기슬롯: { type: Number, default: 0 }, //공
-    방어구슬롯: { type: Number, default: 0 }, //방
-    장갑슬롯: { type: Number, default: 0 }, //속
-    신발슬롯: { type: Number, default: 0 }, //체
-    목걸이슬롯: { type: Number, default: 0 }, //치 치계
-    반지슬롯: { type: Number, default: 0 }, //회 회계
 
+    쪽박체력: { type: Number, default: 0 },
+    쪽박공격력: { type: Number, default: 0 },
+    쪽박방어력: { type: Number, default: 0 },
+
+    중박체력: { type: Number, default: 0 },
+    중박공격력: { type: Number, default: 0 },
+    중박방어력: { type: Number, default: 0 },
+
+    대박체력: { type: Number, default: 0 },
+    대박공격력: { type: Number, default: 0 },
+    대박방어력: { type: Number, default: 0 },
+
+    슬롯: {
+        무기: { type: Number, default: 0 },
+        방어구: { type: Number, default: 0 },
+        장갑: { type: Number, default: 0 },
+        신발: { type: Number, default: 0 },
+        목걸이: { type: Number, default: 0 },
+        반지: { type: Number, default: 0 },
+    },
     인벤토리: [
         {
             이름: { type: String, required: true },
             등급: { type: Number, default: 0 },
             효과: { type: String, required: true },
-
         }
     ],
 
