@@ -205,11 +205,12 @@ app.post('/api', async (req, res) => {
                     await 서브데이터.save();
                 }
 
+                // 유저들 = await 조회유저.find().lean();
 
                 유저들 = await 조회유저.find({}, {
                     아이디: 1,
                     전투력: 1,
-                }).sort({ 전투력: -1 });
+                }).sort({ 전투력: -1 }).lean();
 
                 return res.json({ 성공: true, 데이터: 찾은유저, 토큰: 토큰, 서브데이터, 유저들 });
 

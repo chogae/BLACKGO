@@ -127,6 +127,8 @@ const 유저스키마 = new mongoose.Schema({
     대박공격력: { type: Number, default: 0 },
     대박방어력: { type: Number, default: 0 },
 
+    전투력: { type: Number, default: 0 },
+
     슬롯: {
         무기: { type: Number, default: 0 },
         방어구: { type: Number, default: 0 },
