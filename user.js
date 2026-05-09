@@ -55,10 +55,9 @@ const 유저스키마 = new mongoose.Schema({
             레벨: { type: Number, default: 1 }
         }],
         등급: { type: Number, default: 0 },
-        레벨: { type: Number, default: 1 },
+        레벨: { type: Number, default: 0 },
         장착: { type: Number, default: 0 },
-
-        ...정의.스탯스키마,
+        수량: { type: Number, default: 0 },
     }],
     모험: {
         ...정의.스탯스키마,
