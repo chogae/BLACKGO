@@ -14,17 +14,18 @@ const 유저서브스키마 = new mongoose.Schema({
     접속초: { type: Number },
     접속IP: { type: String, default: "" },
 
-    우편: {
-        이름: { type: String },
-        내용: { type: String },
+    우편: [
+        {
+            이름: { type: String },
+            내용: { type: String },
 
-        접속날짜: { type: String },
-        접속요일: { type: String },
-        접속시각: { type: String },
+            접속날짜: { type: String },
+            접속요일: { type: String },
+            접속시각: { type: String },
 
-        수량: { type: Number },
-
-    },
+            수량: { type: Number },
+        },
+    ],
 
 });
 
