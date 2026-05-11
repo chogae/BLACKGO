@@ -34,6 +34,21 @@ const 유저스키마 = new mongoose.Schema({
     현재다이아: { type: Number, default: 0 },
     총다이아: { type: Number, default: 0 },
 
+    현재양피지: { type: Number, default: 0 },
+    총양피지: { type: Number, default: 0 },
+
+    현재스톤: { type: Number, default: 0 },
+    총스톤: { type: Number, default: 0 },
+
+    지하광산: { type: Number, default: 1 },
+    지하광산티켓: { type: Number, default: 4 },
+
+    궁전: { type: Number, default: 1 },
+    궁전티켓: { type: Number, default: 4 },
+
+    스타게이트: { type: Number, default: 1 },
+    스타게이트티켓: { type: Number, default: 4 },
+
     특성: {
         체력: { type: Number, default: 0 },
         공격력: { type: Number, default: 0 },
@@ -114,7 +129,6 @@ const 유저스키마 = new mongoose.Schema({
         },
     },
 
-
     쪽박체력: { type: Number, default: 0 },
     쪽박공격력: { type: Number, default: 0 },
     쪽박방어력: { type: Number, default: 0 },
@@ -137,6 +151,14 @@ const 유저스키마 = new mongoose.Schema({
         목걸이: { type: Number, default: 0 },
         반지: { type: Number, default: 0 },
     },
+
+    무기레벨: { type: Number, default: 0 },
+    방어구레벨: { type: Number, default: 0 },
+    장갑레벨: { type: Number, default: 0 },
+    신발레벨: { type: Number, default: 0 },
+    목걸이레벨: { type: Number, default: 0 },
+    반지레벨: { type: Number, default: 0 },
+
     인벤토리: [
         {
             이름: { type: String, required: true },
