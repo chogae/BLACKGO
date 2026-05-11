@@ -19,9 +19,9 @@ const 유저서브스키마 = new mongoose.Schema({
             이름: { type: String },
             내용: { type: String },
 
-            접속날짜: { type: String },
-            접속요일: { type: String },
-            접속시각: { type: String },
+            날짜: { type: String },
+            요일: { type: String },
+            시각: { type: String },
 
             수량: { type: Number },
         },

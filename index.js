@@ -55,7 +55,7 @@ app.post('/api', async (req, res) => {
     let 서브 = null;
     const 접속IP = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     const now = new Date();
-    const 년월 = now.toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul" });
+    const 날짜 = now.toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul" });
     const 요일 = now.toLocaleDateString("ko-KR", { weekday: "long", timeZone: "Asia/Seoul" });
     const 시각 = now.toLocaleTimeString("ko-KR", { timeZone: "Asia/Seoul" });
 
@@ -111,7 +111,7 @@ app.post('/api', async (req, res) => {
                     아이디: 데이터.아이디,
                     비밀번호: 데이터.비번,
 
-                    생성날짜: 년월,
+                    생성날짜: 날짜,
                     생성요일: 요일,
                     생성시각: 시각,
                     생성시: 시,
@@ -119,7 +119,7 @@ app.post('/api', async (req, res) => {
                     생성초: 초,
                     생성IP: 접속IP,
 
-                    접속날짜: 년월,
+                    접속날짜: 날짜,
                     접속요일: 요일,
                     접속시각: 시각,
 
@@ -154,6 +154,41 @@ app.post('/api', async (req, res) => {
 
 
                 await 새유저.save();
+
+                서브 = await 유저서브.findOne({ 아이디: 새유저.아이디 });
+
+                if (!서브) {
+                    서브 = new 유저서브({
+                        아이디: 새유저.아이디,
+
+                        업데이트: 0,
+                        점검중: 0,
+                        버전: 0,
+
+                        접속날짜: 날짜,
+                        접속요일: 요일,
+                        접속시각: 시각,
+
+                        접속시: 시,
+                        접속분: 분,
+                        접속초: 초,
+
+                        접속IP: 접속IP,
+                    });
+
+                    서브.우편.push({
+                        이름: `다이아`,
+                        내용: `신규회원 보상`,
+                        날짜: 날짜,
+                        요일: 요일,
+                        시각: 시각,
+                        수량: 1000,
+                    });
+
+                    await 서브.save();
+                }
+
+
                 return res.json({ 성공: true, 메세지: "회원가입에 성공했습니다!" });
 
             case '로그인':
@@ -169,12 +204,12 @@ app.post('/api', async (req, res) => {
 
                 const 토큰 = jwt.sign({ 아이디: 찾은유저.아이디 }, SECRET_KEY, { expiresIn: '1d' });
 
-                if (찾은유저.접속날짜 !== 년월) {
+                if (찾은유저.접속날짜 !== 날짜) {
 
                     찾은유저.지하광산티켓 = 찾은유저.지하광산티켓 < 4 ? 4 : 찾은유저.지하광산티켓;
                     찾은유저.궁전티켓 = 찾은유저.궁전티켓 < 4 ? 4 : 찾은유저.궁전티켓;
                     찾은유저.스타게이트티켓 = 찾은유저.스타게이트티켓 < 4 ? 4 : 찾은유저.스타게이트티켓;
-                    console.log(`${찾은유저.아이디} - 날짜 바뀜: ${찾은유저.접속날짜} -> ${년월}`);
+                    console.log(`${찾은유저.아이디} - 날짜 바뀜: ${찾은유저.접속날짜} -> ${날짜}`);
                 }
 
                 const 경과시간 = 시 - 찾은유저.접속시;
@@ -185,7 +220,7 @@ app.post('/api', async (req, res) => {
                 }
 
 
-                찾은유저.접속날짜 = 년월;
+                찾은유저.접속날짜 = 날짜;
                 찾은유저.접속요일 = 요일;
                 찾은유저.접속시각 = 시각;
 
@@ -198,45 +233,16 @@ app.post('/api', async (req, res) => {
                 유저스탯계산(찾은유저);
                 await 찾은유저.save();
 
+                서브 = await 유저서브.findOne({ 아이디: 찾은유저.아이디 });
+                await 서브.save();
 
-
-
-                let 서브데이터 = await 유저서브.findOne({ 아이디: 찾은유저.아이디 });
-
-                if (!서브데이터) {
-                    서브데이터 = new 유저서브({
-                        아이디: 찾은유저.아이디,
-
-                        업데이트: 0,
-                        점검중: 0,
-                        버전: 0,
-
-                        접속날짜: 년월,
-                        접속요일: 요일,
-                        접속시각: 시각,
-
-                        접속시: 시,
-                        접속분: 분,
-                        접속초: 초,
-
-                        접속IP: 접속IP,
-                    });
-                    await 서브데이터.save();
-                }
-
-                if (서브데이터.버전) {
+                if (서브.버전) {
                     await 조회유저.deleteOne({ 아이디: 찾은유저.아이디 });
                     await 유저서브.deleteOne({ 아이디: 찾은유저.아이디 });
                     return res.json({ 성공: false, 메세지: `버전이 맞지 않는 계정이라 자동 삭제되었습니다. 다시 회원가입하세요` });
 
                 }
 
-
-                // 유저들 = await 조회유저.find().lean();
-                // 유저들 = await 조회유저.find({}, {
-                //     아이디: 1,
-                //     전투력: 1,
-                // }).sort({ 전투력: -1 }).lean();
                 유저들 = await 조회유저.find({}, {
                     아이디: 1,
                     전투력: 1,
@@ -244,8 +250,8 @@ app.post('/api', async (req, res) => {
                     "모험.최고생존일수": 1,
                 })
                     .sort({
-                        "모험.챕터": -1,        // 1순위: 챕터 높은 순
-                        "모험.최고생존일수": -1 // 2순위: 챕터가 같다면 생존일수 높은 순
+                        "모험.챕터": -1,
+                        "모험.최고생존일수": -1
                     })
                     .lean();
 
@@ -256,13 +262,12 @@ app.post('/api', async (req, res) => {
                 오늘.setHours(0, 0, 0, 0);
 
                 const 차이ms = 오늘 - 가입일;
-                // ⭐ 유저 객체에 '진행일차'라는 이름으로 결과값을 저장!
                 const 데이 = Math.floor(차이ms / (1000 * 60 * 60 * 24)) + 1;
 
 
                 메세지 = `로그인되었습니다. Day ${데이}`;
 
-                return res.json({ 성공: true, 데이터: 찾은유저, 토큰: 토큰, 서브데이터, 유저들, 메세지 });
+                return res.json({ 성공: true, 데이터: 찾은유저, 토큰: 토큰, 서브, 유저들, 메세지 });
 
             case '회원탈퇴':
                 if (유저) {
@@ -319,7 +324,8 @@ app.post('/api', async (req, res) => {
                 유저.현재스태미너--;
                 메세지 = `행운을 빕니다`;
                 await 유저.save();
-                return res.json({ 성공: true, 데이터: 유저, 메세지 });
+                await 서브.save();
+                return res.json({ 성공: true, 데이터: 유저, 메세지, 서브 });
 
 
 
@@ -356,7 +362,8 @@ app.post('/api', async (req, res) => {
                 유저스탯계산(유저);
 
                 await 유저.save();
-                return res.json({ 성공: true, 데이터: 유저, 메세지 });
+                await 서브.save();
+                return res.json({ 성공: true, 데이터: 유저, 메세지, 서브 });
 
 
 
@@ -628,7 +635,8 @@ app.post('/api', async (req, res) => {
 
 
                 await 유저.save();
-                return res.json({ 성공: true, 데이터: 유저, 메세지, 전투결과, 상대: 몬스터, });
+                await 서브.save();
+                return res.json({ 성공: true, 데이터: 유저, 메세지, 전투결과, 상대: 몬스터, 서브 });
 
 
 
@@ -648,7 +656,8 @@ app.post('/api', async (req, res) => {
                 메세지 = `강화 성공!`;
 
                 await 유저.save();
-                return res.json({ 성공: true, 데이터: 유저, 메세지 });
+                await 서브.save();
+                return res.json({ 성공: true, 데이터: 유저, 메세지, 서브 });
 
 
             case '모든계정삭제':
@@ -794,6 +803,57 @@ app.post('/api', async (req, res) => {
                     });
                 }
 
+            case '다이아쏘기':
+
+                if (!유저 || 유저.주인장 !== 1) {
+                    return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
+                }
+
+                try {
+                    // const 결과 = await 유저서브.updateMany(
+                    //     {}, // 빈 객체는 모든 문서를 의미함
+                    //     // { $set: { 우편: [] } }
+                    //     {
+                    //         $push: {
+                    //             우편: {
+                    //                 이름: "다이아",
+                    //                 내용: "실험체들에게 보내는 선물",
+                    //                 수량: 1000,
+                    //                 날짜: 날짜,
+                    //                 요일: 요일,
+                    //                 시각: 시각,
+                    //             }
+                    //         }
+                    //     }
+                    // );
+
+                    const 결과 = await 유저서브.updateOne(
+                        { 아이디: "주인장" }, // 필터 조건: 아이디가 '주인장'인 문서만 찾음
+                        {
+                            $push: {
+                                우편: {
+                                    이름: "다이아",
+                                    내용: "특정 유저 지급 선물",
+                                    수량: 1000,
+                                    날짜: 날짜, // 변수 선언 여부에 따라 맞춰 사용
+                                    요일: 요일,
+                                    시각: 시각,
+                                }
+                            }
+                        }
+                    );
+
+                    return res.json({
+                        성공: true,
+                        메세지: `모든유저에게 다이아 배송 완료 (수정된 문서 수: ${결과.modifiedCount})`
+                    });
+                } catch (에러) {
+                    return res.status(500).json({
+                        성공: false,
+                        메세지: "서버 오류가 발생했습니다."
+                    });
+                }
+
             case '버그데이터삭제':
 
                 if (!유저 || 유저.주인장 !== 1) {
@@ -868,7 +928,8 @@ app.post('/api', async (req, res) => {
 
                 메세지 = `[${등급테이블[뽑은등급].이름}]${뽑은유형} ${뽑은장비.이름}(을)를 획득!`;
                 await 유저.save();
-                return res.json({ 성공: true, 데이터: 유저, 메세지 });
+                await 서브.save();
+                return res.json({ 성공: true, 데이터: 유저, 메세지, 서브 });
 
             case '십뽑기':
                 if (!유저) return res.status(404).json({ 성공: false, 메세지: "유저 정보 없음" });
@@ -922,7 +983,8 @@ app.post('/api', async (req, res) => {
                 유저스탯계산(유저);
 
                 await 유저.save();
-                return res.json({ 성공: true, 데이터: 유저, 메세지 });
+                await 서브.save();
+                return res.json({ 성공: true, 데이터: 유저, 메세지, 서브 });
 
 
             case '자동합성':
@@ -969,8 +1031,9 @@ app.post('/api', async (req, res) => {
 
                 유저스탯계산(유저);
                 await 유저.save();
+                await 서브.save();
 
-                return res.json({ 성공: true, 데이터: 유저, 메세지: "자동합성이 완료되었습니다" });
+                return res.json({ 성공: true, 데이터: 유저, 서브, 메세지: "자동합성이 완료되었습니다" });
 
             case '장비장착':
                 if (!유저) return res.status(404).json({ 성공: false, 메세지: "유저 정보 없음" });
@@ -987,7 +1050,8 @@ app.post('/api', async (req, res) => {
 
                 유저스탯계산(유저);
                 await 유저.save();
-                return res.json({ 성공: true, 데이터: 유저, 메세지 });
+                await 서브.save();
+                return res.json({ 성공: true, 데이터: 유저, 메세지, 서브 });
 
 
 
@@ -1092,7 +1156,8 @@ app.post('/api', async (req, res) => {
 
                 // 유저스탯계산(유저);
                 await 유저.save();
-                return res.json({ 성공: true, 데이터: 유저, 메세지, 전투결과: 던전전투결과, 상대: 던전몬스터, });
+                await 서브.save();
+                return res.json({ 성공: true, 데이터: 유저, 메세지, 전투결과: 던전전투결과, 상대: 던전몬스터, 서브, });
 
 
 
@@ -1112,7 +1177,8 @@ app.post('/api', async (req, res) => {
                 유저스탯계산(유저);
 
                 await 유저.save();
-                return res.json({ 성공: true, 데이터: 유저, 메세지 });
+                await 서브.save();
+                return res.json({ 성공: true, 데이터: 유저, 메세지, 서브 });
 
 
             case '장비강화':
@@ -1131,7 +1197,8 @@ app.post('/api', async (req, res) => {
                 유저스탯계산(유저);
 
                 await 유저.save();
-                return res.json({ 성공: true, 데이터: 유저, 메세지 });
+                await 서브.save();
+                return res.json({ 성공: true, 데이터: 유저, 메세지, 서브 });
 
 
 
@@ -1156,7 +1223,41 @@ app.post('/api', async (req, res) => {
                 유저스탯계산(유저);
 
                 await 유저.save();
-                return res.json({ 성공: true, 데이터: 유저, 메세지 });
+                await 서브.save();
+                return res.json({ 성공: true, 데이터: 유저, 메세지, 서브 });
+
+
+            case '우편받기':
+                if (!유저) return res.status(404).json({ 성공: false, 메세지: "유저 정보 없음" });
+
+                const 우편물 = 서브.우편.id(데이터.우편);
+
+                if (우편물.이름 === `다이아`) {
+                    유저.현재다이아 += 우편물.수량;
+                    유저.총다이아 += 우편물.수량;
+                }
+                else if (우편물.이름 === `골드`) {
+                    유저.현재골드 += 우편물.수량;
+                    유저.총골드 += 우편물.수량;
+                }
+
+                서브.우편.pull(우편물._id);
+
+                유저스탯계산(유저);
+
+                메세지 = `우편 ${우편물.이름}(을)를 수령했습니다`;
+
+                await 유저.save();
+                await 서브.save();
+                return res.json({ 성공: true, 유저, 메세지, 서브 });
+
+
+            case '우편함':
+                if (!유저) return res.status(404).json({ 성공: false, 메세지: "유저 정보 없음" });
+
+                await 유저.save();
+                await 서브.save();
+                return res.json({ 성공: true, 유저, 메세지, 서브 });
 
 
 
