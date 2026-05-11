@@ -840,7 +840,6 @@
                 객체생성(모험화면박스, `모험화면악마성아이콘`,);
                 모험화면악마성아이콘.innerHTML = `${게임아이콘정제(악마성아이콘, 100)}`;
 
-
                 객체생성(모험화면박스, `모험화면버튼박스`, 중앙);
                 객체생성(모험화면버튼박스, `모험화면새로하기`, 버튼, 테두리, 큰여백);
                 모험화면새로하기.innerHTML = `새로하기`;
@@ -886,7 +885,7 @@
                 };
 
                 if (유저.모험.챕터 > 1) {
-                    객체생성(모험화면박스, `모험화면소탕`, 좌하단, 버튼, 테두리,);
+                    객체생성(모험화면박스, `모험화면소탕`, 버튼, 테두리,);
                     모험화면소탕.innerHTML = `이전 층 소탕`;
                     모험화면소탕.onclick = async (e) => {
                         e.stopPropagation();
@@ -911,9 +910,8 @@
                             알림표시(결과.메세지);
                         }
                     };
-
-
                 }
+
 
             } catch (error) {
                 console.log(error);
@@ -2415,15 +2413,99 @@
 
 
 
+        let mouseX = 0;
+        let mouseY = 0;
+        let clickInterval = null;
+        let isKeyDown = false;
 
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
 
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && !isKeyDown) {
+                e.preventDefault();
+                isKeyDown = true;
 
+                if (clickInterval) clearInterval(clickInterval);
 
+                clickInterval = setInterval(() => {
+                    const element = document.elementFromPoint(mouseX, mouseY);
+                    if (element && typeof element.click === 'function') {
+                        try {
+                            element.click();
+                        } catch (err) {
+                        }
+                    }
+                }, 100);
+            }
+        });
 
+        window.addEventListener('keyup', (e) => {
+            if (e.code === 'Space') {
+                isKeyDown = false;
+                if (clickInterval) {
+                    clearInterval(clickInterval);
+                    clickInterval = null;
+                }
+            }
+        });
 
+        window.addEventListener('blur', () => {
+            isKeyDown = false;
+            if (clickInterval) {
+                clearInterval(clickInterval);
+                clickInterval = null;
+            }
+        });
 
+        // let mouseX = 0;
+        // let mouseY = 0;
+        // let clickInterval = null;
+        // let isKeyDown = false;
 
+        // window.addEventListener('mousemove', (e) => {
+        //     mouseX = e.clientX;
+        //     mouseY = e.clientY;
+        // });
 
+        // window.addEventListener('keydown', (e) => {
+        //     if ((e.key === 'm' || e.key === 'ㅡ') && !isKeyDown) {
+        //         isKeyDown = true;
+
+        //         if (clickInterval) clearInterval(clickInterval);
+
+        //         clickInterval = setInterval(() => {
+        //             const element = document.elementFromPoint(mouseX, mouseY);
+        //             if (element && typeof element.click === 'function') {
+        //                 try {
+        //                     element.click();
+        //                 } catch (err) {
+
+        //                 }
+        //             }
+        //         }, 100);
+        //     }
+        // });
+
+        // window.addEventListener('keyup', (e) => {
+        //     if (e.key === 'm' || e.key === 'ㅡ') {
+        //         isKeyDown = false;
+        //         if (clickInterval) {
+        //             clearInterval(clickInterval);
+        //             clickInterval = null;
+        //         }
+        //     }
+        // });
+
+        // window.addEventListener('blur', () => {
+        //     isKeyDown = false;
+        //     if (clickInterval) {
+        //         clearInterval(clickInterval);
+        //         clickInterval = null;
+        //     }
+        // });
 
         //외부클릭
         document.addEventListener("click", async (e) => {
