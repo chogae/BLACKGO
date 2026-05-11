@@ -2413,53 +2413,6 @@
 
 
 
-        let mouseX = 0;
-        let mouseY = 0;
-        let clickInterval = null;
-        let isKeyDown = false;
-
-        window.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
-
-        window.addEventListener('keydown', (e) => {
-            if (e.code === 'Space' && !isKeyDown) {
-                e.preventDefault();
-                isKeyDown = true;
-
-                if (clickInterval) clearInterval(clickInterval);
-
-                clickInterval = setInterval(() => {
-                    const element = document.elementFromPoint(mouseX, mouseY);
-                    if (element && typeof element.click === 'function') {
-                        try {
-                            element.click();
-                        } catch (err) {
-                        }
-                    }
-                }, 100);
-            }
-        });
-
-        window.addEventListener('keyup', (e) => {
-            if (e.code === 'Space') {
-                isKeyDown = false;
-                if (clickInterval) {
-                    clearInterval(clickInterval);
-                    clickInterval = null;
-                }
-            }
-        });
-
-        window.addEventListener('blur', () => {
-            isKeyDown = false;
-            if (clickInterval) {
-                clearInterval(clickInterval);
-                clickInterval = null;
-            }
-        });
-
         // let mouseX = 0;
         // let mouseY = 0;
         // let clickInterval = null;
@@ -2471,7 +2424,8 @@
         // });
 
         // window.addEventListener('keydown', (e) => {
-        //     if ((e.key === 'm' || e.key === 'ㅡ') && !isKeyDown) {
+        //     if (e.code === 'Space' && !isKeyDown) {
+        //         e.preventDefault();
         //         isKeyDown = true;
 
         //         if (clickInterval) clearInterval(clickInterval);
@@ -2482,7 +2436,6 @@
         //                 try {
         //                     element.click();
         //                 } catch (err) {
-
         //                 }
         //             }
         //         }, 100);
@@ -2490,7 +2443,7 @@
         // });
 
         // window.addEventListener('keyup', (e) => {
-        //     if (e.key === 'm' || e.key === 'ㅡ') {
+        //     if (e.code === 'Space') {
         //         isKeyDown = false;
         //         if (clickInterval) {
         //             clearInterval(clickInterval);
@@ -2506,6 +2459,53 @@
         //         clickInterval = null;
         //     }
         // });
+
+        let mouseX = 0;
+        let mouseY = 0;
+        let clickInterval = null;
+        let isKeyDown = false;
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if ((e.key === 'm' || e.key === 'ㅡ') && !isKeyDown) {
+                isKeyDown = true;
+
+                if (clickInterval) clearInterval(clickInterval);
+
+                clickInterval = setInterval(() => {
+                    const element = document.elementFromPoint(mouseX, mouseY);
+                    if (element && typeof element.click === 'function') {
+                        try {
+                            element.click();
+                        } catch (err) {
+
+                        }
+                    }
+                }, 100);
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'm' || e.key === 'ㅡ') {
+                isKeyDown = false;
+                if (clickInterval) {
+                    clearInterval(clickInterval);
+                    clickInterval = null;
+                }
+            }
+        });
+
+        window.addEventListener('blur', () => {
+            isKeyDown = false;
+            if (clickInterval) {
+                clearInterval(clickInterval);
+                clickInterval = null;
+            }
+        });
 
         //외부클릭
         document.addEventListener("click", async (e) => {
