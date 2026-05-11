@@ -86,6 +86,12 @@ app.post('/api', async (req, res) => {
                     return res.json({ 성공: false, 메세지: `서버 점검중입니다>.<` });
                 }
 
+                if (서브.업데이트) {
+                    서브.업데이트 = 0;
+                    await 서브.save();
+                    return res.json({ 성공: false, 메세지: `게임 업데이트가 있습니다. 화면 새로고침 시 자동 업데이트됩니다` });
+                }
+
             } catch (토큰에러) {
                 return res.status(401).json({ 성공: false, 메세지: "인증이 만료되었습니다." });
             }
@@ -757,6 +763,29 @@ app.post('/api', async (req, res) => {
                     return res.json({
                         성공: true,
                         메세지: `모든유저의 점검이 해제되었습니다 (수정된 문서 수: ${결과.modifiedCount})`
+                    });
+                } catch (에러) {
+                    return res.status(500).json({
+                        성공: false,
+                        메세지: "서버 오류가 발생했습니다."
+                    });
+                }
+
+            case '업데이트':
+
+                if (!유저 || 유저.주인장 !== 1) {
+                    return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
+                }
+
+                try {
+                    const 결과 = await 유저서브.updateMany(
+                        {}, // 빈 객체는 모든 문서를 의미함
+                        { $set: { 업데이트: 1 } }
+                    );
+
+                    return res.json({
+                        성공: true,
+                        메세지: `모든유저가 업데이트 되었습니다 (수정된 문서 수: ${결과.modifiedCount})`
                     });
                 } catch (에러) {
                     return res.status(500).json({
