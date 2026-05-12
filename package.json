@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "d": "nodemon server.js",
-    "v": "git add . && git commit -m '배포' && git push origin main"
+    "c": "git add . && git commit -m '배포' && git push origin main"
   },
   "keywords": [],
   "author": "",
