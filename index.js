@@ -54,7 +54,19 @@ app.post('/api', async (req, res) => {
     let 메세지 = `　`;
     let 서브 = null;
     let 삭제대상아이디들 = null;
+
+    // 61.75.170.3
+    // 175.200.3.151
     const 접속IP = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+
+    if (접속IP && 접속IP.includes('175.200.3.151')) {
+        return res.status(403).json({ 성공: false, 메세지: "고수야 그러다 감옥간다" });
+    }
+
+    // if (접속IP && 접속IP.includes('::1')) {
+    //     return res.status(403).json({ 성공: false, 메세지: "고수야 그러다 감옥간다" });
+    // }
+
     const now = new Date();
     const 날짜 = now.toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul" });
     const 요일 = now.toLocaleDateString("ko-KR", { weekday: "long", timeZone: "Asia/Seoul" });
