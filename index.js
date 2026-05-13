@@ -58,13 +58,17 @@ app.post('/api', async (req, res) => {
     // 61.75.170.3
     // 175.200.3.151
     const 접속IP = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-
+console.log(접속IP);
     if (접속IP && 접속IP.includes('175.200.3.151')) {
         return res.status(403).json({ 성공: false, 메세지: "고수야 그러다 감옥간다" });
     }
 
     if (접속IP && 접속IP.includes('61.75.170.3')) {
         return res.status(403).json({ 성공: false, 메세지: "고수야 그러다 감옥간다" });
+    }
+
+    if (접속IP && !접속IP.includes('::1')) {
+        return res.status(403).json({ 성공: false, 메세지: "조금 더 보완해서 버그없는 게임으로 찾아오겠습니다" });
     }
 
     // if (접속IP && 접속IP.includes('::1')) {
