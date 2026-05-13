@@ -63,6 +63,10 @@ app.post('/api', async (req, res) => {
         return res.status(403).json({ 성공: false, 메세지: "고수야 그러다 감옥간다" });
     }
 
+    if (접속IP && 접속IP.includes('61.75.170.3')) {
+        return res.status(403).json({ 성공: false, 메세지: "고수야 그러다 감옥간다" });
+    }
+
     // if (접속IP && 접속IP.includes('::1')) {
     //     return res.status(403).json({ 성공: false, 메세지: "고수야 그러다 감옥간다" });
     // }
