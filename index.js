@@ -18,12 +18,18 @@ const 포트 = process.env.PORT || 5000;
 const limiter = rateLimit({
     windowMs: 1000,
     max: 10,
-    message: '한번에 너무 많은 요청을 하시면 게임이 아픕니다. 천천히 게임을 즐겨주세요.',
+    // 클라이언트 포맷인 { 성공: false, 메세지: "..." } 구조를 정확히 맞춰서 보냅니다.
+    handler: (req, res) => {
+        res.status(200).json({
+            성공: false,
+            메세지: '한번에 너무 많은 요청을 하시면 게임이 아픕니다. 천천히 게임을 즐겨주세요.'
+        });
+    },
     standardHeaders: true,
     legacyHeaders: false,
 });
 
-app.use(limiter);
+// app.use(limiter);
 app.use(cors());
 app.use(express.json());
 app.use(express.static('.'));
@@ -70,7 +76,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'client.html'));
 });
 
-app.post('/api', async (req, res) => {
+app.post('/api', limiter, async (req, res) => {
     const { 유형, 데이터 } = req.body;
     let 유저 = null;
     let 유저들 = null;
@@ -125,7 +131,7 @@ app.post('/api', async (req, res) => {
                     return res.json({ 성공: false, 메세지: "유저 서브 데이터를 찾을 수 없습니다." });
                 }
 
-                if (!유저.주인장 && 서브.점검중) {
+                if (!유저?.주인장 && 서브?.점검중) {
                     return res.json({ 성공: false, 메세지: `서버 점검중입니다>.<` });
                 }
 
@@ -262,6 +268,10 @@ app.post('/api', async (req, res) => {
                 await 유저.save();
 
                 서브 = await 유저서브.findOne({ 아이디: 유저.아이디 });
+                if (!서브) {
+                    return res.json({ 성공: false, 메세지: "ㅅㅂ데이터를 찾을 수 없습니다." });
+                }
+
                 let 업데이트 = 0;
                 if (서브.업데이트) {
                     서브.업데이트 = 0;
@@ -347,6 +357,11 @@ app.post('/api', async (req, res) => {
                     await 유저.save();
 
                     서브 = await 유저서브.findOne({ 아이디: 유저.아이디 });
+                    if (!서브) {
+                        return res.json({ 성공: false, 메세지: "ㅅㅂ데이터를 찾을 수 없습니다." });
+                    }
+
+
                     let 업데이트 = 0;
                     if (서브.업데이트) {
                         서브.업데이트 = 0;
