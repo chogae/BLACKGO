@@ -5,15 +5,25 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { rateLimit } from 'express-rate-limit';
 
 dotenv.config();
 const SECRET_KEY = 'YOUR_VERY_SECRET_KEY';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = express(); // 한 번만 선언!
+const app = express();
 const 포트 = process.env.PORT || 5000;
 
+const limiter = rateLimit({
+    windowMs: 1000,
+    max: 10,
+    message: '과도한 요청입니다. 잠시 후 다시 시도해주세요.',
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+app.use(limiter);
 app.use(cors());
 app.use(express.json());
 app.use(express.static('.'));
