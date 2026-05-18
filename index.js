@@ -18,7 +18,7 @@ const 포트 = process.env.PORT || 5000;
 const limiter = rateLimit({
     windowMs: 1000,
     max: 10,
-    message: '과도한 요청입니다. 잠시 후 다시 시도해주세요.',
+    message: '한번에 너무 많은 요청을 하시면 게임이 아픕니다. 천천히 게임을 즐겨주세요.',
     standardHeaders: true,
     legacyHeaders: false,
 });
@@ -120,6 +120,10 @@ app.post('/api', async (req, res) => {
                 }
 
                 서브 = await 유저서브.findOne({ 아이디: 해독된아이디 });
+
+                if (!서브) {
+                    return res.json({ 성공: false, 메세지: "유저 서브 데이터를 찾을 수 없습니다." });
+                }
 
                 if (!유저.주인장 && 서브.점검중) {
                     return res.json({ 성공: false, 메세지: `서버 점검중입니다>.<` });
