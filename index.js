@@ -3460,8 +3460,6 @@ function 전투시뮬레이션(유저, 상대) {
             )
         );
 
-        console.log(유저.모험.피해증가);
-        console.log(상대.모험.피해감소);
         const 상대기본대미지 = Math.max(
             1,
             Math.floor(
