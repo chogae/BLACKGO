@@ -22,55 +22,46 @@ const 유저스키마 = new mongoose.Schema({
     접속초: { type: Number },
     접속IP: { type: String, default: "" },
 
+    유저: { type: Number, default: 1 },
     주인장: { type: Number, default: 0 },
 
-    현재스태미너: { type: Number, default: 30 },
-    최대스태미너: { type: Number, default: 30 },
-    총스태미너: { type: Number, default: 0 },
+    배터리: { type: Number, default: 50 },
+    최대배터리: { type: Number, default: 50 },
+    총배터리: { type: Number, default: 0 },
 
-    현재골드: { type: Number, default: 0 },
-    총골드: { type: Number, default: 0 },
-
-    현재다이아: { type: Number, default: 0 },
+    다이아: { type: Number, default: 0 },
     총다이아: { type: Number, default: 0 },
 
-    현재양피지: { type: Number, default: 0 },
-    총양피지: { type: Number, default: 0 },
+    골드: { type: Number, default: 0 },
+    총골드: { type: Number, default: 0 },
 
-    현재스톤: { type: Number, default: 0 },
+    스톤: { type: Number, default: 0 },
     총스톤: { type: Number, default: 0 },
 
-    지하광산: { type: Number, default: 1 },
-    지하광산티켓: { type: Number, default: 4 },
+    양피지: { type: Number, default: 0 },
+    총양피지: { type: Number, default: 0 },
 
-    궁전: { type: Number, default: 1 },
-    궁전티켓: { type: Number, default: 4 },
-
-    스타게이트: { type: Number, default: 1 },
-    스타게이트티켓: { type: Number, default: 4 },
 
     특성: {
         체력: { type: Number, default: 0 },
         공격력: { type: Number, default: 0 },
         방어력: { type: Number, default: 0 },
+        속력: { type: Number, default: 0 },
     },
     계정: {
-        ...정의.계정스탯스키마,
+        ...정의.스탯스키마,
     },
+    어빌리티: [{
+        이름: { type: String, default: "" },
+        등급: { type: Number, default: 0 },
+    }],
     최종: {
         ...정의.스탯스키마,
-
     },
     장비: [{
         이름: { type: String, required: true },
         유형: { type: String, required: true },
-        스킬: [{
-            이름: { type: String },
-            등급: { type: Number },
-            레벨: { type: Number, default: 1 }
-        }],
         등급: { type: Number, default: 0 },
-        레벨: { type: Number, default: 0 },
         장착: { type: Number, default: 0 },
         수량: { type: Number, default: 0 },
     }],
@@ -78,12 +69,15 @@ const 유저스키마 = new mongoose.Schema({
         ...정의.스탯스키마,
 
         //초기화x
-        챕터: { type: Number, default: 1 },
+        악마성: { type: Number, default: 1 },
         최고생존일수: { type: Number, default: 1 },
 
+        초기화: {
+
+        },
         //초기화 0
         진행: { type: Number, default: 0 },
-        몬스터: { type: Number, default: 0 },
+        전투: { type: Number, default: 0 },
         경험치: { type: Number, default: 0 },
         일반: { type: Number, default: 0 },
         히든: { type: Number, default: 0 },
@@ -96,37 +90,19 @@ const 유저스키마 = new mongoose.Schema({
 
         //초기화 ""
         이벤트: { type: String, default: "" },
+        보상메세지: { type: String, default: "" },
 
         스킬: [{
             이름: { type: String },
-            등급: { type: Number },
+            등급: { type: String },
             레벨: { type: Number, default: 1 }
         }],
 
-        스킬뽑기: {
-            일번스킬: {
-                이름: { type: String, default: "" },
-                등급: { type: Number, default: 0 },
-                효과: { type: String, default: "" },
-            },
-            이번스킬: {
-                이름: { type: String, default: "" },
-                등급: { type: Number, default: 0 },
-                효과: { type: String, default: "" },
-            },
-            삼번스킬: {
-                이름: { type: String, default: "" },
-                등급: { type: Number, default: 0 },
-                효과: { type: String, default: "" },
-            },
+        스킬뽑기: [{
+            이름: { type: String },
+        }],
 
-        },
-
-        획득스킬: {
-            이름: { type: String, default: "" },
-            등급: { type: Number, default: 0 },
-            효과: { type: String, default: "" },
-        },
+        획득스킬: { type: String },
     },
 
     쪽박체력: { type: Number, default: 0 },
@@ -141,9 +117,13 @@ const 유저스키마 = new mongoose.Schema({
     대박공격력: { type: Number, default: 0 },
     대박방어력: { type: Number, default: 0 },
 
+    초대박체력: { type: Number, default: 0 },
+    초대박공격력: { type: Number, default: 0 },
+    초대박방어력: { type: Number, default: 0 },
+
     전투력: { type: Number, default: 0 },
 
-    슬롯: {
+    장비슬롯: {
         무기: { type: Number, default: 0 },
         방어구: { type: Number, default: 0 },
         장갑: { type: Number, default: 0 },
@@ -152,18 +132,18 @@ const 유저스키마 = new mongoose.Schema({
         반지: { type: Number, default: 0 },
     },
 
-    무기레벨: { type: Number, default: 0 },
-    방어구레벨: { type: Number, default: 0 },
-    장갑레벨: { type: Number, default: 0 },
-    신발레벨: { type: Number, default: 0 },
-    목걸이레벨: { type: Number, default: 0 },
-    반지레벨: { type: Number, default: 0 },
+    장비레벨: {
+        무기: { type: Number, default: 0 },
+        방어구: { type: Number, default: 0 },
+        장갑: { type: Number, default: 0 },
+        신발: { type: Number, default: 0 },
+        목걸이: { type: Number, default: 0 },
+        반지: { type: Number, default: 0 },
+    },
 
     인벤토리: [
         {
             이름: { type: String, required: true },
-            등급: { type: Number, default: 0 },
-            효과: { type: String, required: true },
         }
     ],
 
