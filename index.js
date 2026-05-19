@@ -1040,6 +1040,30 @@ app.post('/api', limiter, async (req, res) => {
                 return res.json({ 성공: true, 유저, 메세지, 서브 });
 
 
+            case '특성회수':
+                if (!유저) return res.status(404).json({ 성공: false, 메세지: "유저 정보 없음" });
+
+                const 회수특성명 = 데이터.특성;
+                const 회수특성레벨 = 유저.특성[회수특성명];
+
+                // 합산 함수 사용
+                const 회수특성골드 = 블랙공식(1, 300, 0, 회수특성레벨, 1.03);
+
+                if (!유저.배터리) {
+                    return res.json({ 성공: false, 메세지: `배터리가 부족합니다` });
+                }
+
+                유저.골드 += 회수특성골드;
+                유저.특성[회수특성명] = 0;
+                유저.배터리--;
+                유저스탯계산(유저);
+
+                메세지 = `${회수특성레벨}단계 회수 성공!`;
+
+                await 유저.save();
+                return res.json({ 성공: true, 유저, 메세지, 서브 });
+
+
             case '장비강화':
                 if (!유저) return res.status(404).json({ 성공: false, 메세지: "유저 정보 없음" });
 
@@ -2130,10 +2154,7 @@ function 유저스탯계산(유저) {
         });
 
     유저.전투력 = 전투력;
-
-    // console.log(유저.모험);
 }
-
 
 //몬스터스탯계산함수
 function 몬스터스탯계산(유저) {
