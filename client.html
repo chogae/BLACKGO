@@ -279,21 +279,21 @@
             설정메뉴박스.style.display = isHidden ? 'flex' : 'none';
         };
 
-        객체생성(설정메뉴박스, `회원탈퇴버튼`, 버튼, 진빨);
-        회원탈퇴버튼.innerHTML = `회원탈퇴`;
-        회원탈퇴버튼.onclick = async (e) => {
-            e?.stopPropagation();
+        // 객체생성(설정메뉴박스, `회원탈퇴버튼`, 버튼, 진빨);
+        // 회원탈퇴버튼.innerHTML = `회원탈퇴`;
+        // 회원탈퇴버튼.onclick = async (e) => {
+        //     e?.stopPropagation();
 
-            const 확인 = await 팝업(`정말로 탈퇴하시겠습니까?<br>데이터가 모두 사라집니다.`);
-            if (!확인) return;
-            const 탈퇴결과 = await 서버요청('회원탈퇴', { 토큰: 접속토큰 });
-            if (탈퇴결과?.성공) {
-                localStorage.removeItem('자동로그인토큰');
+        //     const 확인 = await 팝업(`정말로 탈퇴하시겠습니까?<br>데이터가 모두 사라집니다.`);
+        //     if (!확인) return;
+        //     const 탈퇴결과 = await 서버요청('회원탈퇴', { 토큰: 접속토큰 });
+        //     if (탈퇴결과?.성공) {
+        //         localStorage.removeItem('자동로그인토큰');
 
-                location.reload();
-            }
+        //         location.reload();
+        //     }
 
-        };
+        // };
 
         객체생성(설정메뉴박스, `로그아웃버튼`, 버튼);
         로그아웃버튼.innerHTML = `로그아웃`;
@@ -2645,6 +2645,7 @@
                 어빌리티 최대개수 18개로 제한<br>
                 추 후 어빌리티 최대개수 도달 시 잠금기능 구현 예정<br>
                 어빌리티로 획득되는 피해감소 최대수치 90%로 제한<br>
+                탈퇴버튼 삭제<br>
                 <br>
 
        
