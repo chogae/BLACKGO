@@ -645,7 +645,7 @@ app.post('/api', limiter, async (req, res) => {
                             유저.최대배터리++;
                             유저.모험.최고생존일수 = 1;
 
-                            if (유저.모험.악마성 <= 14) {
+                            if (유저.어빌리티.length < 18) {
                                 유저.어빌리티.push({ 이름: "", 등급: 0 });
                             }
 
@@ -1497,7 +1497,7 @@ app.post('/api', limiter, async (req, res) => {
 
                 try {
                     const 대상아이디리스트 = [
-                        '주인장',
+                        // '주인장',
                     ];
 
                     if (대상아이디리스트.length === 0) {
