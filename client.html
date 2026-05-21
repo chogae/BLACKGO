@@ -477,7 +477,7 @@
 
             객체생성(메인박스, `메인로그인`, 버튼, 테두리);
             메인로그인.innerHTML = `로그인`;
-
+            //로그인함수
             메인로그인.onclick = async (e) => {
                 e?.stopPropagation();
 
@@ -526,6 +526,17 @@
                                 주인장화면함수();
                             };
                         }
+
+                        if (유저?.모험.악마성 > 4) {
+                            객체생성(성장메뉴박스, `땅따먹기버튼`, 버튼);
+                            땅따먹기버튼.innerHTML = `땅따먹기`;
+                            땅따먹기버튼.onclick = async (e) => {
+                                e?.stopPropagation();
+
+                                땅따먹기화면함수();
+                            };
+                        }
+
                     } else {
                         if (결과.메세지.includes("고 수")) {
                             객체생성(document.body, '드랍박스', 화면중앙, 테두리, 테두리마력(빨강), 글자마력(빨강), 가로(380), 큰여백, 줄바꿈);
@@ -545,7 +556,7 @@
 
 
             const 저장된토큰 = localStorage.getItem('자동로그인토큰'); // 로그인 시 저장해뒀던 키 값
-
+            //자동로그인함수
             if (저장된토큰) {
                 알림표시(`로그인 기록이 확인되었습니다. 자동로그인 중...`);
                 const 결과 = await 서버요청('자동로그인', {
@@ -589,6 +600,17 @@
                             주인장화면함수();
                         };
                     }
+
+                    if (유저?.모험.악마성 > 4) {
+                        객체생성(성장메뉴박스, `땅따먹기버튼`, 버튼);
+                        땅따먹기버튼.innerHTML = `땅따먹기`;
+                        땅따먹기버튼.onclick = async (e) => {
+                            e?.stopPropagation();
+
+                            땅따먹기화면함수();
+                        };
+                    }
+
 
                 } else {
                     localStorage.removeItem('자동로그인토큰');
@@ -1856,7 +1878,7 @@
                     어빌리티화면설명.innerHTML = `
                 악마성 등반에 성공시 어빌리티가 1개씨 추가되어<br>
                 최대 18개 까지 개방됩니다<br>
-                어빌리티 최대 도달 시 잠금기능이 활성화됩니다<br>
+                어빌리티 최대수량 도달 시 잠금기능이 활성화됩니다<br>
                 `;
 
 
@@ -1900,12 +1922,12 @@
                     }
 
                     const 등급표표시 = 객체생성(어빌리티화면등급표, `어빌리티순서${순서}`, 노여백);
-                    if (순서 < 6) {
-                        등급표표시(내용.색상);
+                    if (순서 > 6) {
+                        등급표표시(글자마력(내용.색상));
 
                     }
                     else {
-                        등급표표시(글자마력(내용.색상));
+                        등급표표시(내용.색상);
 
                     }
                     등급표표시.innerHTML = 내용.등급;
@@ -1980,7 +2002,7 @@
                     if (window.어빌리티잠금목록.includes(순서)) {
                         어빌리티랜덤스탯박스(주석);
                     } else {
-                        어빌리티랜덤스탯박스(내용.등급 > 0 ? 등급테이블[내용.등급].색상 : ``);
+                        어빌리티랜덤스탯박스(내용.등급 > 0 && 내용.등급 > 6 ? 글자마력(등급테이블[내용.등급].색상) : 등급테이블[내용.등급].색상);
                     }
                 });
 
@@ -2711,6 +2733,7 @@
                 신화스킬 방어 끝판왕이 전설스킬 수호(으)로 강등<br>
                 어빌리티 최대수량(18개) 도달 시 잠금기능 오픈<br>
                 어빌리티 화면에 등급 색상표시 추가<br>
+                후공일 때 폭죽 스킬 미발동 버그 수정<br>
                 <br>
 
                 <br>
@@ -2875,17 +2898,39 @@
         }
 
 
+        //땅따먹기화면고
+        async function 땅따먹기화면함수() {
+            try {
 
+                if (!유저.주인장) {
+                    알림표시(`개발중입니다`);
+                    return;
+                }
 
+                화면초기화();
 
+                알림표시(`　`);
 
+                if (!window.땅따먹기화면박스) {
+                    객체생성(document.body, '땅따먹기화면박스', 가로(400), 테두리);
+                }
 
+                땅따먹기화면박스.innerHTML = ``;
+                땅따먹기화면박스.style.display = `flex`;
 
+                객체생성(땅따먹기화면박스, `땅따먹기화면설명`, 밑줄, 가로꽉);
 
+                땅따먹기화면설명.innerHTML = `
+                `;
 
 
+            } catch (error) {
+                console.log(error);
 
+            } finally {
 
+            }
+        }
 
 
 
@@ -2990,52 +3035,19 @@
 
 
 
-        // let mouseX = 0;
-        // let mouseY = 0;
-        // let clickInterval = null;
-        // let isKeyDown = false;
 
-        // window.addEventListener('mousemove', (e) => {
-        //     mouseX = e.clientX;
-        //     mouseY = e.clientY;
-        // });
 
-        // window.addEventListener('keydown', (e) => {
-        //     if (e.code === 'Space' && !isKeyDown) {
-        //         e.preventDefault();
-        //         isKeyDown = true;
 
-        //         if (clickInterval) clearInterval(clickInterval);
 
-        //         clickInterval = setInterval(() => {
-        //             const element = document.elementFromPoint(mouseX, mouseY);
-        //             if (element && typeof element.click === 'function') {
-        //                 try {
-        //                     element.click();
-        //                 } catch (err) {
-        //                 }
-        //             }
-        //         }, 100);
-        //     }
-        // });
 
-        // window.addEventListener('keyup', (e) => {
-        //     if (e.code === 'Space') {
-        //         isKeyDown = false;
-        //         if (clickInterval) {
-        //             clearInterval(clickInterval);
-        //             clickInterval = null;
-        //         }
-        //     }
-        // });
 
-        // window.addEventListener('blur', () => {
-        //     isKeyDown = false;
-        //     if (clickInterval) {
-        //         clearInterval(clickInterval);
-        //         clickInterval = null;
-        //     }
-        // });
+
+
+
+
+
+
+
 
         let mouseX = 0;
         let mouseY = 0;
@@ -3118,7 +3130,6 @@
                     if (typeof 회원탈퇴버튼 !== 'undefined' && 회원탈퇴버튼) {
                         회원탈퇴버튼.click();
                     }
-
                     break;
 
                 case 'w':
@@ -3126,7 +3137,6 @@
                     if (typeof 로그아웃버튼 !== 'undefined' && 로그아웃버튼) {
                         로그아웃버튼.click();
                     }
-
                     break;
 
                 case 'e':
@@ -3145,32 +3155,26 @@
 
                 case 't':
                 case 'ㅅ':
-
                     break;
 
                 case 'y':
                 case 'ㅛ':
-
                     break;
 
                 case 'u':
                 case 'ㅕ':
-
                     break;
 
                 case 'i':
                 case 'ㅑ':
-
                     break;
 
                 case 'o':
                 case 'ㅐ':
-
                     break;
 
                 case 'p':
                 case 'ㅔ':
-
                     break;
 
                 case 'a':
@@ -3203,8 +3207,9 @@
 
                 case 'g':
                 case 'ㅎ':
-                    break;
-
+                    if (typeof 땅따먹기버튼 !== 'undefined' && 땅따먹기버튼) {
+                        땅따먹기버튼.click();
+                    }
                     break;
 
                 case 'h':
@@ -3213,17 +3218,14 @@
 
                 case 'j':
                 case 'ㅓ':
-
                     break;
 
                 case 'k':
                 case 'ㅏ':
-
                     break;
 
                 case 'l':
                 case 'ㅣ':
-
                     break;
 
                 case 'z':
@@ -3261,16 +3263,13 @@
 
                 case 'n':
                 case 'ㅜ':
-
                     break;
 
                 case 'm':
                 case 'ㅡ':
-
                     break;
 
                 case 'escape':
-
                     break;
 
                 default:
