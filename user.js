@@ -95,7 +95,7 @@ const 유저스키마 = new mongoose.Schema({
         스킬: [{
             이름: { type: String },
             등급: { type: String },
-            레벨: { type: Number, default: 1 }
+            레벨: { type: Number, default: 0 }
         }],
 
         스킬뽑기: [{
