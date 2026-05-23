@@ -1249,7 +1249,7 @@ app.post('/api', limiter, async (req, res) => {
 
             case '우편보내기':
 
-                if (!유저 || 유저.주인장 !== 1) {
+                if (!유저.주인장) {
                     return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
                 }
 
@@ -1296,7 +1296,7 @@ app.post('/api', limiter, async (req, res) => {
                 }
 
             case '전체우편보내기':
-                if (!유저 || 유저.주인장 !== 1) {
+                if (!유저.주인장) {
                     return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다." });
                 }
 
@@ -1381,9 +1381,35 @@ app.post('/api', limiter, async (req, res) => {
                 return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
 
 
+            case '그때그때':
+                if (!유저.주인장) {
+                    return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
+                }
+
+                try {
+                    const 결과 = await 조회유저.updateOne(
+                        { 아이디: `후` }, // 전체 조건인 {} 대신 특정 아이디 조건을 넣습니다.
+                        { $set: { 골드: 9999, 다이아: 9999 } }
+                    );
+
+                    if (결과.matchedCount === 0) {
+                        return res.json({ 성공: false, 메세지: "해당 아이디를 가진 유저를 찾을 수 없습니다." });
+                    }
+
+                    return res.json({
+                        성공: true,
+                        메세지: `유저의 재화가 수정되었습니다.`
+                    });
+                } catch (에러) {
+                    return res.status(500).json({
+                        성공: false,
+                        메세지: "서버 오류가 발생했습니다."
+                    });
+                }
+
             case '점검중':
 
-                if (!유저 || 유저.주인장 !== 1) {
+                if (!유저.주인장) {
                     return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
                 }
 
@@ -1406,7 +1432,7 @@ app.post('/api', limiter, async (req, res) => {
 
             case '점검해제':
 
-                if (!유저 || 유저.주인장 !== 1) {
+                if (!유저.주인장) {
                     return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
                 }
 
@@ -1429,7 +1455,7 @@ app.post('/api', limiter, async (req, res) => {
 
             case '업데이트':
 
-                if (!유저 || 유저.주인장 !== 1) {
+                if (!유저.주인장) {
                     return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
                 }
 
@@ -1452,7 +1478,7 @@ app.post('/api', limiter, async (req, res) => {
 
             case '버그데이터삭제':
 
-                if (!유저 || 유저.주인장 !== 1) {
+                if (!유저.주인장) {
                     return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
                 }
 
@@ -1494,7 +1520,7 @@ app.post('/api', limiter, async (req, res) => {
 
             case '버전업':
 
-                if (!유저 || 유저.주인장 !== 1) {
+                if (!유저.주인장) {
                     return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
                 }
 
@@ -1518,7 +1544,7 @@ app.post('/api', limiter, async (req, res) => {
 
             // case '모든계정삭제':
 
-            //     if (!유저 || 유저.주인장 !== 1) {
+            //     if (!유저.주인장) {
             //         return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
             //     }
 
@@ -1565,7 +1591,7 @@ app.post('/api', limiter, async (req, res) => {
 
             case '모든계정삭제':
 
-                if (!유저 || 유저.주인장 !== 1) {
+                if (!유저.주인장) {
                     return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
                 }
 
@@ -1605,7 +1631,7 @@ app.post('/api', limiter, async (req, res) => {
 
             // case '모든계정삭제':
 
-            //     if (!유저 || 유저.주인장 !== 1) {
+            //     if (!유저.주인장) {
             //         return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
             //     }
 
