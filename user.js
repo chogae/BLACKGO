@@ -72,9 +72,6 @@ const 유저스키마 = new mongoose.Schema({
         악마성: { type: Number, default: 1 },
         최고생존일수: { type: Number, default: 1 },
 
-        초기화: {
-
-        },
         //초기화 0
         진행: { type: Number, default: 0 },
         전투: { type: Number, default: 0 },

@@ -320,7 +320,6 @@ app.post('/api', limiter, async (req, res) => {
                     토큰: 토큰,
                     유저들,
                     유저,
-                    서브,
                     메세지,
                     업데이트
                 });
@@ -410,7 +409,6 @@ app.post('/api', limiter, async (req, res) => {
                         토큰: 데이터.토큰,
                         유저들,
                         유저,
-                        서브,
                         메세지,
                         업데이트
                     });
@@ -428,8 +426,6 @@ app.post('/api', limiter, async (req, res) => {
 
 
             case '새로하기':
-                if (!유저) return res.status(404).json({ 성공: false, 메세지: "유저 정보 없음" });
-
                 if (!유저.배터리) {
                     return res.json({ 성공: false, 메세지: `배터리가 부족합니다` });
                 }
@@ -458,13 +454,10 @@ app.post('/api', limiter, async (req, res) => {
                 유저.배터리--;
                 유저스탯계산(유저);
                 await 유저.save();
-                return res.json({ 성공: true, 유저, 서브, 메세지, });
+                return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
 
 
             case '모험포기':
-                if (!유저) return res.status(404).json({ 성공: false, 메세지: "유저 정보 없음" });
-
-
                 [
                     `진행`,
                     `전투`,
@@ -488,12 +481,10 @@ app.post('/api', limiter, async (req, res) => {
                 유저.모험.스킬 = [];
                 유저스탯계산(유저);
                 await 유저.save();
-                return res.json({ 성공: true, 유저, 서브, 메세지, });
+                return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
 
 
             case '다음날':
-                if (!유저) return res.status(404).json({ 성공: false, 메세지: "유저 정보 없음" });
-
                 let 상대;
                 let 전투결과 = {};
                 유저.모험.보상메세지 = ``;
@@ -597,6 +588,10 @@ app.post('/api', limiter, async (req, res) => {
                         case `치명타 마스터리`:
                             유저.모험.치명타확률 += 운빨정수.대박;
                             유저.모험.치명타피해 += 운빨정수.대박 * 2;
+                            break;
+                        case `반격 마스터리`:
+                            유저.모험.반격확률 += 운빨정수.대박;
+                            유저.모험.반격피해 += 운빨정수.대박 * 2;
                             break;
                         case `연타의 영혼`:
                             유저.모험.연타확률 += 운빨정수.대박;
@@ -885,11 +880,9 @@ app.post('/api', limiter, async (req, res) => {
 
 
                 await 유저.save();
-                return res.json({ 성공: true, 유저, 서브, 메세지, 상대, 전투결과 });
+                return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, 상대, 전투결과 });
 
             case '전당조회':
-                if (!유저) return res.status(404).json({ 성공: false, 메세지: "유저 정보 없음" });
-
                 유저들 = await 조회유저.find({
                     아이디: { $nin: 삭제대상아이디들 }
                 }, {
@@ -906,12 +899,10 @@ app.post('/api', limiter, async (req, res) => {
 
                 await 유저.save();
                 await 서브.save();
-                return res.json({ 성공: true, 유저, 메세지, 서브, 유저들 });
+                return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, 유저들 });
 
 
             case '장비장착':
-                if (!유저) return res.status(404).json({ 성공: false, 메세지: "유저 정보 없음" });
-
                 const 장착아이템 = 유저.장비.id(데이터.장착장비);
 
                 if (장착아이템) {
@@ -925,11 +916,9 @@ app.post('/api', limiter, async (req, res) => {
                 유저스탯계산(유저);
 
                 await 유저.save();
-                return res.json({ 성공: true, 유저, 메세지, 서브, 유저들 });
+                return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, 유저들 });
 
             case '자동합성':
-                if (!유저) return res.status(404).json({ 성공: false, 메세지: "유저 정보 없음" });
-
                 let 합성발생 = false;
                 const 최대등급 = 등급테이블.length - 1; // 등급테이블의 최대 인덱스
 
@@ -971,11 +960,9 @@ app.post('/api', limiter, async (req, res) => {
 
                 유저스탯계산(유저);
                 await 유저.save();
-                return res.json({ 성공: true, 유저, 서브, 메세지 });
+                return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지 });
 
             case '일뽑기':
-                if (!유저) return res.status(404).json({ 성공: false, 메세지: "유저 정보 없음" });
-
                 if (유저.다이아 < 300) {
                     return res.json({ 성공: false, 메세지: `다이아가 부족합니다` });
                 }
@@ -1005,11 +992,9 @@ app.post('/api', limiter, async (req, res) => {
 
                 메세지 = `[${등급테이블[뽑은등급].등급}]${뽑은유형} ${뽑은장비.이름}(을)를 획득!`;
                 await 유저.save();
-                return res.json({ 성공: true, 유저, 메세지, 서브 });
+                return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
 
             case '십뽑기':
-                if (!유저) return res.status(404).json({ 성공: false, 메세지: "유저 정보 없음" });
-
                 if (유저.다이아 < 2800) {
                     return res.json({ 성공: false, 메세지: `다이아가 부족합니다` });
                 }
@@ -1059,12 +1044,10 @@ app.post('/api', limiter, async (req, res) => {
                 유저스탯계산(유저);
 
                 await 유저.save();
-                return res.json({ 성공: true, 유저, 메세지, 서브 });
+                return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
 
 
             case '특성강화':
-                if (!유저) return res.status(404).json({ 성공: false, 메세지: "유저 정보 없음" });
-
                 const 특성명 = 데이터.특성;
                 const 특성강화횟수 = 데이터.특성강화횟수 || 1;
                 const 특성레벨 = 유저.특성[특성명];
@@ -1084,12 +1067,10 @@ app.post('/api', limiter, async (req, res) => {
                 메세지 = `${특성강화횟수}단계 강화 성공!`;
 
                 await 유저.save();
-                return res.json({ 성공: true, 유저, 메세지, 서브 });
+                return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
 
 
             case '특성회수':
-                if (!유저) return res.status(404).json({ 성공: false, 메세지: "유저 정보 없음" });
-
                 const 회수특성명 = 데이터.특성;
                 const 회수특성레벨 = 유저.특성[회수특성명];
 
@@ -1108,12 +1089,10 @@ app.post('/api', limiter, async (req, res) => {
                 메세지 = `${회수특성레벨}단계 회수 성공!`;
 
                 await 유저.save();
-                return res.json({ 성공: true, 유저, 메세지, 서브 });
+                return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
 
 
             case '장비강화':
-                if (!유저) return res.status(404).json({ 성공: false, 메세지: "유저 정보 없음" });
-
                 const 장비명 = 데이터.장비;
                 const 장비강화횟수 = 데이터.장비강화횟수 || 1;
                 const 장비레벨 = 유저.장비레벨[장비명];
@@ -1133,11 +1112,9 @@ app.post('/api', limiter, async (req, res) => {
                 메세지 = `${장비강화횟수}단계 강화 성공!`;
 
                 await 유저.save();
-                return res.json({ 성공: true, 유저, 메세지, 서브 });
+                return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
 
             // case '어빌리티리롤':
-            //     if (!유저) return res.status(404).json({ 성공: false, 메세지: "유저 정보 없음" });
-
             //     const 잠금목록 = 데이터.잠금목록 || [];
             //     const 어빌리티리롤비용 = 300 * Math.pow(2, 잠금목록.length);
 
@@ -1159,12 +1136,10 @@ app.post('/api', limiter, async (req, res) => {
             //     유저스탯계산(유저);
 
             //     await 유저.save();
-            //     return res.json({ 성공: true, 유저, 메세지, 서브 });
+            //     return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() },메세지,  });
 
 
             case '어빌리티리롤':
-                if (!유저) return res.status(404).json({ 성공: false, 메세지: "유저 정보 없음" });
-
                 const 잠금목록 = 데이터.잠금목록 || [];
                 const 자동목록 = 데이터.자동목록 || [];
                 const 자동등급 = 데이터.자동등급 || 0;
@@ -1236,12 +1211,10 @@ app.post('/api', limiter, async (req, res) => {
                 유저스탯계산(유저);
 
                 await 유저.save();
-                return res.json({ 성공: true, 유저, 메세지, 서브 });
+                return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
 
 
             case '이전층소탕':
-                if (!유저) return res.status(404).json({ 성공: false, 메세지: "유저 정보 없음" });
-
                 if (!유저.배터리) {
                     return res.json({ 성공: false, 메세지: `배터리가 부족합니다` });
                 }
@@ -1271,7 +1244,7 @@ app.post('/api', limiter, async (req, res) => {
                 유저스탯계산(유저);
 
                 await 유저.save();
-                return res.json({ 성공: true, 유저, 메세지, 서브 });
+                return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
 
 
             case '우편보내기':
@@ -1364,8 +1337,6 @@ app.post('/api', limiter, async (req, res) => {
                 }
 
             case '우편받기':
-                if (!유저) return res.status(404).json({ 성공: false, 메세지: "유저 정보 없음" });
-
                 const 우편물 = 서브.우편함.id(데이터.우편);
                 메세지 = `우편 ${우편물.이름}(을)를 수령했습니다`;
 
@@ -1401,15 +1372,13 @@ app.post('/api', limiter, async (req, res) => {
 
                 await 유저.save();
                 await 서브.save();
-                return res.json({ 성공: true, 유저, 메세지, 서브 });
+                return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
 
 
             case '우편함갱신':
-                if (!유저) return res.status(404).json({ 성공: false, 메세지: "유저 정보 없음" });
-
                 await 유저.save();
                 await 서브.save();
-                return res.json({ 성공: true, 유저, 메세지, 서브 });
+                return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
 
 
             case '점검중':
@@ -2675,6 +2644,7 @@ function 전투시뮬레이션(유저, 상대) {
                         Math.max(0, 상대.모험.방어력
                             - (상대유리대포방 ? 상대.대박방어력 : 0))
                         + (상대수호 * 턴 * 상대.중박방어력)
+                        + (상대황금새알레벨 * 상대.쪽박방어력)
                     ))
                 * (1 + 유저.모험.피해증가 * 0.01)
                 * Math.max(0.1, 1 - 상대.모험.피해감소 * 0.01)
@@ -2695,6 +2665,7 @@ function 전투시뮬레이션(유저, 상대) {
                         Math.max(0, 유저.모험.방어력
                             - (유저유리대포방 ? 유저.대박방어력 : 0))
                         + (유저수호 * 턴 * 유저.중박방어력)
+                        + (유저황금새알레벨 * 유저.쪽박방어력)
                     ))
                 * (1 + 상대.모험.피해증가 * 0.01)
                 * Math.max(0.1, 1 - 유저.모험.피해감소 * 0.01)
