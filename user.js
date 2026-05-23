@@ -141,6 +141,8 @@ const 유저스키마 = new mongoose.Schema({
         반지: { type: Number, default: 0 },
     },
 
+    스킬도감: [String],
+
     인벤토리: [
         {
             이름: { type: String, required: true },
