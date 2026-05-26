@@ -1604,18 +1604,17 @@ app.post('/api', limiter, async (req, res) => {
 
 
             case '악성유저삭제':
-
                 if (!유저.주인장) {
                     return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
                 }
 
                 try {
-                    if (차단IP리스트.length === 0) {
+                    if (차단IP목록.length === 0) {
                         return res.status(400).json({ 성공: false, 메세지: "대상 IP 리스트가 비어있습니다." });
                     }
 
                     // 1. IP 리스트 중 하나라도 포함된 유저들 추출 (정규식 배열 생성)
-                    const IP정규식 = 차단IP리스트.map(ip => new RegExp(ip));
+                    const IP정규식 = 차단IP목록.map(ip => new RegExp(ip));
                     const 삭제대상유저들 = await 조회유저.find({
                         접속IP: { $in: IP정규식 },
                         주인장: { $ne: 1 }
@@ -1635,7 +1634,7 @@ app.post('/api', limiter, async (req, res) => {
 
                     return res.json({
                         성공: true,
-                        메세지: `${결과.deletedCount}개의 계정이 삭제되었습니다. (대상 IP: ${차단IP리스트.join(', ')})`
+                        메세지: `${결과.deletedCount}개의 계정이 삭제되었습니다. (대상 IP: ${차단IP목록.join(', ')})`
                     });
                 } catch (에러) {
                     return res.status(500).json({

@@ -341,13 +341,13 @@
             패치노트화면함수();
         };
 
-        객체생성(설정메뉴박스, `커뮤니티버튼`, 버튼,);
-        커뮤니티버튼.innerHTML = `커뮤니티`;
-        커뮤니티버튼.onclick = async (e) => {
-            e?.stopPropagation();
+        // 객체생성(설정메뉴박스, `커뮤니티버튼`, 버튼,);
+        // 커뮤니티버튼.innerHTML = `커뮤니티`;
+        // 커뮤니티버튼.onclick = async (e) => {
+        //     e?.stopPropagation();
 
-            커뮤니티화면함수();
-        };
+        //     커뮤니티화면함수();
+        // };
 
         객체생성(설정메뉴박스, `우편함버튼`, 버튼,);
         우편함버튼.innerHTML = `우편함`;
@@ -3100,39 +3100,39 @@
             }
         }
 
-        //커뮤니티화면바로가기
-        function 커뮤니티화면함수() {
-            화면초기화();
+        // //커뮤니티화면바로가기
+        // function 커뮤니티화면함수() {
+        //     화면초기화();
 
-            알림표시(`　`);
-
-
-            try {
-                if (!window.커뮤니티화면박스) {
-                    객체생성(document.body, '커뮤니티화면박스', 가로(400), 테두리);
-                }
-
-                커뮤니티화면박스.innerHTML = ``;
-                커뮤니티화면박스.style.display = `flex`;
-
-                객체생성(커뮤니티화면박스, `커뮤니티화면설명`, 밑줄, 가로꽉);
-
-                커뮤니티화면설명.innerHTML = `
-
-                        <a href="https://open.kakao.com/o/gbnmdWvh" target="_blank" style="color:#4FC1FF;">
-        https://open.kakao.com/o/gbnmdWvh
-        </a>
-
-                `;
+        //     알림표시(`　`);
 
 
-            } catch (error) {
-                console.log(error);
+        //     try {
+        //         if (!window.커뮤니티화면박스) {
+        //             객체생성(document.body, '커뮤니티화면박스', 가로(400), 테두리);
+        //         }
 
-            } finally {
+        //         커뮤니티화면박스.innerHTML = ``;
+        //         커뮤니티화면박스.style.display = `flex`;
 
-            }
-        }
+        //         객체생성(커뮤니티화면박스, `커뮤니티화면설명`, 밑줄, 가로꽉);
+
+        //         커뮤니티화면설명.innerHTML = `
+
+        //                 <a href="https://open.kakao.com/o/gbnmdWvh" target="_blank" style="color:#4FC1FF;">
+        // https://open.kakao.com/o/gbnmdWvh
+        // </a>
+
+        //         `;
+
+
+        //     } catch (error) {
+        //         console.log(error);
+
+        //     } finally {
+
+        //     }
+        // }
 
 
 
