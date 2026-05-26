@@ -132,6 +132,8 @@ app.post('/api', limiter, async (req, res) => {
                     return res.json({ 성공: false, 메세지: "유저 서브 데이터를 찾을 수 없습니다." });
                 }
 
+                삭제대상아이디들 = await 유저서브.find({ 버전: 1 }).distinct('아이디');
+
                 if (!유저?.주인장 && 서브?.점검중) {
                     return res.json({ 성공: false, 메세지: `서버 점검중입니다>.<` });
                 }
@@ -287,7 +289,6 @@ app.post('/api', limiter, async (req, res) => {
 
                 }
 
-                삭제대상아이디들 = await 유저서브.find({ 버전: 1 }).distinct('아이디');
 
                 유저들 = await 조회유저.find({
                     아이디: { $nin: 삭제대상아이디들 }
@@ -375,8 +376,6 @@ app.post('/api', limiter, async (req, res) => {
                         return res.json({ 성공: false, 메세지: `버전이 맞지 않는 계정이라 자동 삭제되었습니다. 다시 회원가입하세요` });
 
                     }
-
-                    삭제대상아이디들 = await 유저서브.find({ 버전: 1 }).distinct('아이디');
 
                     유저들 = await 조회유저.find({
                         아이디: { $nin: 삭제대상아이디들 }
