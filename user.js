@@ -41,6 +41,7 @@ const 유저스키마 = new mongoose.Schema({
     양피지: { type: Number, default: 0 },
     총양피지: { type: Number, default: 0 },
 
+    
 
     특성: {
         체력: { type: Number, default: 0 },
