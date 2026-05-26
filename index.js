@@ -77,6 +77,8 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'client.html'));
 });
 
+const 차단IP목록 = ['175.200.3.151', '61.75.170.3', '117.111.7.84'];
+
 app.post('/api', limiter, async (req, res) => {
     const { 유형, 데이터 } = req.body;
     let 유저 = null;
@@ -88,14 +90,11 @@ app.post('/api', limiter, async (req, res) => {
     // 61.75.170.3
     // 175.200.3.151
     const 접속IP = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    if (접속IP && 접속IP.includes('175.200.3.151')) {
+
+
+    if (접속IP && 차단IP목록.some(ip => 접속IP.includes(ip))) {
         return res.status(403).json({ 성공: false, 메세지: "고 수" });
     }
-
-    if (접속IP && 접속IP.includes('61.75.170.3')) {
-        return res.status(403).json({ 성공: false, 메세지: "고 수" });
-    }
-
     // if (접속IP && !접속IP.includes('::1')) {
     //     return res.status(403).json({ 성공: false, 메세지: "ㅡㅡㅡㅡㅡ" });
     // }
@@ -902,6 +901,16 @@ app.post('/api', limiter, async (req, res) => {
                 await 서브.save();
                 return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, 유저들 });
 
+            case '악성유저조회':
+                const 대상유저 = await 조회유저.findOne({ 아이디: 데이터.악성유저 }, { 접속IP: 1, 아이디: 1 }).lean();
+
+                if (대상유저) {
+                    메세지 = `${데이터.악성유저}의 IP: ${대상유저.접속IP || 'IP 정보 없음'}`;
+                } else {
+                    메세지 = '해당 유저를 찾을 수 없습니다.';
+                }
+                return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, 유저들 });
+
 
             case '장비장착':
                 const 장착아이템 = 유저.장비.id(데이터.장착장비);
@@ -1594,52 +1603,46 @@ app.post('/api', limiter, async (req, res) => {
                 }
 
 
-            // case '모든계정삭제':
+            case '악성유저삭제':
 
-            //     if (!유저.주인장) {
-            //         return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
-            //     }
+                if (!유저.주인장) {
+                    return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
+                }
 
-            //     try {
+                try {
+                    if (차단IP리스트.length === 0) {
+                        return res.status(400).json({ 성공: false, 메세지: "대상 IP 리스트가 비어있습니다." });
+                    }
 
-            // const 대상IP리스트 = [
-            //     `175.200.3.151`,
-            //     `61.75.170.3`,
-            // ];
+                    // 1. IP 리스트 중 하나라도 포함된 유저들 추출 (정규식 배열 생성)
+                    const IP정규식 = 차단IP리스트.map(ip => new RegExp(ip));
+                    const 삭제대상유저들 = await 조회유저.find({
+                        접속IP: { $in: IP정규식 },
+                        주인장: { $ne: 1 }
+                    }).select('아이디');
 
-            // if (대상IP리스트.length === 0) {
-            //     return res.status(400).json({ 성공: false, 메세지: "대상 IP 리스트가 비어있습니다." });
-            // }
+                    const 아이디리스트 = 삭제대상유저들.map(u => u.아이디);
 
-            // // 1. IP 리스트 중 하나라도 포함된 유저들 추출 (정규식 배열 생성)
-            // const IP정규식 = 대상IP리스트.map(ip => new RegExp(ip));
-            // const 삭제대상유저들 = await 조회유저.find({
-            //     접속IP: { $in: IP정규식 },
-            //     주인장: { $ne: 1 }
-            // }).select('아이디');
+                    if (아이디리스트.length === 0) {
+                        return res.json({ 성공: false, 메세지: "삭제할 대상 유저가 없습니다." });
+                    }
 
-            // const 아이디리스트 = 삭제대상유저들.map(u => u.아이디);
+                    // 2. 메인 유저 데이터 일괄 삭제
+                    const 결과 = await 조회유저.deleteMany({ 아이디: { $in: 아이디리스트 } });
 
-            // if (아이디리스트.length === 0) {
-            //     return res.json({ 성공: false, 메세지: "삭제할 대상 유저가 없습니다." });
-            // }
+                    // 3. 서브 데이터 일괄 삭제
+                    await 유저서브.deleteMany({ 아이디: { $in: 아이디리스트 } });
 
-            // // 2. 메인 유저 데이터 일괄 삭제
-            // const 결과 = await 조회유저.deleteMany({ 아이디: { $in: 아이디리스트 } });
-
-            // // 3. 서브 데이터 일괄 삭제
-            // await 유저서브.deleteMany({ 아이디: { $in: 아이디리스트 } });
-
-            // return res.json({
-            //     성공: true,
-            //     메세지: `${결과.deletedCount}개의 계정이 삭제되었습니다. (대상 IP: ${대상IP리스트.join(', ')})`
-            // });
-            //     } catch (에러) {
-            //         return res.status(500).json({
-            //             성공: false,
-            //             메세지: "삭제 중 서버 오류가 발생했습니다."
-            //         });
-            //     }
+                    return res.json({
+                        성공: true,
+                        메세지: `${결과.deletedCount}개의 계정이 삭제되었습니다. (대상 IP: ${차단IP리스트.join(', ')})`
+                    });
+                } catch (에러) {
+                    return res.status(500).json({
+                        성공: false,
+                        메세지: "삭제 중 서버 오류가 발생했습니다."
+                    });
+                }
 
             case '모든계정삭제':
 
