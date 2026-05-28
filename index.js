@@ -1110,6 +1110,8 @@ app.post('/api', limiter, async (req, res) => {
                 return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, 유저들 });
 
             case '악성유저조회':
+                if (!유저.주인장) return res.json({ 성공: false, 메세지: `주인장 아니면 돌아가소` });
+
                 const 대상유저 = await 조회유저.findOne({ 아이디: 데이터.악성유저 }, { 접속IP: 1, 아이디: 1 }).lean();
 
                 if (대상유저) {
