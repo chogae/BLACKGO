@@ -18,7 +18,7 @@ const 포트 = process.env.PORT || 5000;
 
 const limiter = rateLimit({
     windowMs: 1000,
-    max: 30,
+    max: 10,
     // 클라이언트 포맷인 { 성공: false, 메세지: "..." } 구조를 정확히 맞춰서 보냅니다.
     handler: (req, res) => {
         res.status(200).json({
