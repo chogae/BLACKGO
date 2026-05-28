@@ -22,6 +22,8 @@ const 유저스키마 = new mongoose.Schema({
     접속초: { type: Number },
     접속IP: { type: String, default: "" },
 
+    n일차: { type: Number, default: 1 },
+
     유저: { type: Number, default: 1 },
     주인장: { type: Number, default: 0 },
 
@@ -41,7 +43,12 @@ const 유저스키마 = new mongoose.Schema({
     양피지: { type: Number, default: 0 },
     총양피지: { type: Number, default: 0 },
 
-    
+    유물: [{
+        이름: { type: String, required: true },
+        활성: { type: Number, default: 0 },
+        등급: { type: Number, default: 0 },
+        효과: [],
+    }],
 
     특성: {
         체력: { type: Number, default: 0 },
@@ -66,6 +73,11 @@ const 유저스키마 = new mongoose.Schema({
         장착: { type: Number, default: 0 },
         수량: { type: Number, default: 0 },
     }],
+
+    무한지하감옥: {
+        최고생존일수: { type: Number, default: 1 },
+    },
+
     모험: {
         ...정의.스탯스키마,
 
