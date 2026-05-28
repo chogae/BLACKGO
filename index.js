@@ -1693,7 +1693,7 @@ app.post('/api', limiter, async (req, res) => {
                     const 결과 = await 조회유저.updateOne(
                         { 아이디: `gagl` }, // 전체 조건인 {} 대신 특정 아이디 조건을 넣습니다.
                         // { $set: { 골드: 9999, 다이아: 9999 } }
-                        { $pull: { 유물: { 이름: "헵타그램" } } }
+                        { $pull: { 유물: { 이름: "삼위일체" } } }
                     );
 
                     if (결과.matchedCount === 0) {

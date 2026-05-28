@@ -327,10 +327,15 @@ export const 스타일 = {
         // left: '50%',
         // transform: 'translate(-50%, -50%)',
 
-        position: 'absolute',
-        top: '20%',
+        position: 'fixed',
+        top: '30%',
         left: '50%',
         transform: 'translateX(-50%)',
+
+        // position: 'absolute',
+        // top: '20%',
+        // left: '50%',
+        // transform: 'translateX(-50%)',
 
     },
     여백: { padding: '5px', },
