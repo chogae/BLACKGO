@@ -414,7 +414,7 @@ app.post('/api', limiter, async (req, res) => {
                     if (!비번일치) {
                         return res.status(401).json({ 성공: false, 메세지: "비밀번호가 틀렸습니다." });
                     }
-                    토큰 = jwt.sign({ 아이디: 유저.아이디 }, SECRET_KEY, { expiresIn: '1d' }); // const 제거
+                    토큰 = jwt.sign({ 아이디: 유저.아이디 }, SECRET_KEY, { expiresIn: '1d' });
                 } else {
                     try {
                         const 해독됨 = jwt.verify(데이터.토큰, SECRET_KEY);
@@ -422,7 +422,7 @@ app.post('/api', limiter, async (req, res) => {
                         if (!유저) {
                             return res.json({ 성공: false, 메세지: "유저를 찾을 수 없습니다." });
                         }
-                        토큰 = 데이터.토큰;
+                        토큰 = jwt.sign({ 아이디: 유저.아이디 }, SECRET_KEY, { expiresIn: '1d' });
                     } catch (err) {
                         return res.json({ 성공: false, 메세지: "토큰이 만료되었거나 유효하지 않습니다." });
                     }
@@ -470,6 +470,10 @@ app.post('/api', limiter, async (req, res) => {
                 유저.접속IP = 접속IP;
 
                 메세지 = `로그인되었습니다. Day ${유저.n일차}`;
+
+                //유물추가
+                const 룬검 = 유저.유물.find(유물 => 유물.이름 === `룬검`);
+                if (!룬검) 유저.유물.push({ 이름: `룬검`, });
 
                 const 카드세우스 = 유저.유물.find(유물 => 유물.이름 === `카드세우스`);
                 if (!카드세우스) 유저.유물.push({ 이름: `카드세우스`, });
@@ -1153,11 +1157,32 @@ app.post('/api', limiter, async (req, res) => {
 
                 const 찾은세트이름 = Object.keys(세트효과테이블).find(세트이름 => 장착아이템.이름.includes(세트이름));
                 const 세트카운트 = Object.values(유저?.장비).filter(장비 => 장비 && 장비.장착 === 1 && 장비.이름 && 장비.이름.includes(찾은세트이름)).length;
+                if (세트카운트 >= 2) {
+                    유저.장비도감[찾은세트이름][0] = 1;
+                }
+                if (세트카운트 >= 4) {
+                    유저.장비도감[찾은세트이름][1] = 1;
+                }
+                if (세트카운트 >= 6) {
+                    유저.장비도감[찾은세트이름][2] = 1;
+                }
                 if (세트카운트 === 6) {
                     const 삼위일체 = 유저.유물.find(유물 => 유물.이름 === `삼위일체`);
                     if (삼위일체 && !삼위일체.활성) {
                         삼위일체.활성 = 1;
                         메세지 = `삼위일체`;
+                    }
+                }
+
+                const 모든도감활성화 = Object.keys(유저.장비도감.toObject ? 유저.장비도감.toObject() : 유저.장비도감)
+                    .filter(key => ['릴리트', '디아블로', '레비아탄', '벨제부브', '사탄', '루시퍼', '베히모스', '아바돈', '바론'].includes(key))
+                    .every(도감이름 => 유저.장비도감[도감이름].every(값 => 값 === 1));
+
+                if (모든도감활성화) {
+                    const 룬검 = 유저.유물.find(유물 => 유물.이름 === `룬검`);
+                    if (룬검 && !룬검.활성) {
+                        룬검.활성 = 1;
+                        메세지 = `룬검`;
                     }
                 }
                 유저스탯계산(유저);
@@ -3411,6 +3436,12 @@ function 전투시뮬레이션(유저, 상대) {
     let 승패 = 유저현재체력 > 0 ? 1 : 0;
     if (유저현재체력 && 턴 > 30) 승패 = 0;
 
+    if (승패) {
+        const 룬검 = 유저.유물.find(유물 => 유물.이름 === `룬검`);
+        if (룬검 && 룬검.활성) {
+            유저현재체력 += Math.floor(유저.모험.최대체력 * 0.11);
+        }
+    }
     return { 승패, 로그, 유저현재체력, 상대현재체력 };
 }
 

@@ -133,6 +133,18 @@ const 유저스키마 = new mongoose.Schema({
 
     전투력: { type: Number, default: 0 },
 
+    장비도감: {
+        릴리트: { type: [Number], default: [0, 0, 0] },
+        디아블로: { type: [Number], default: [0, 0, 0] },
+        레비아탄: { type: [Number], default: [0, 0, 0] },
+        벨제부브: { type: [Number], default: [0, 0, 0] },
+        사탄: { type: [Number], default: [0, 0, 0] },
+        루시퍼: { type: [Number], default: [0, 0, 0] },
+        베히모스: { type: [Number], default: [0, 0, 0] },
+        아바돈: { type: [Number], default: [0, 0, 0] },
+        바론: { type: [Number], default: [0, 0, 0] },
+    },
+
     장비슬롯: {
         무기: { type: Number, default: 0 },
         방어구: { type: Number, default: 0 },
