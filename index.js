@@ -329,7 +329,8 @@ app.post('/api', limiter, async (req, res) => {
                 }
 
                 유저들 = await 조회유저.find({
-                    아이디: { $nin: 삭제대상아이디들 }
+                    아이디: { $nin: 삭제대상아이디들 },
+                    주인장: { $ne: 1 },
                 }, {
                     아이디: 1,
                     전투력: 1,
@@ -597,6 +598,9 @@ app.post('/api', limiter, async (req, res) => {
                     유저.모험.보상메세지 = `${배울스킬.이름}(을)를 배웠습니다`;
 
                     switch (배울스킬.이름) {
+                        case `오만`:
+                            유저.모험.피해증가 += 운빨정수.중박;
+                            break;
                         case `강철심장`:
                             유저.모험.피해감소 += 운빨정수.중박;
                             break;
@@ -1587,30 +1591,30 @@ app.post('/api', limiter, async (req, res) => {
                 }
 
                 try {
-                    for (const [키, 값] of Object.entries(유저.특성)) {
-                        유저.특성[키] = 0;
-                        console.log(`${키}: ${값}`);
+                    // for (const [키, 값] of Object.entries(유저.특성)) {
+                    //     유저.특성[키] = 0;
+                    //     console.log(`${키}: ${값}`);
+                    // }
+                    // await 유저.save();
+                    // return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
+
+                    const 타겟유저 = await 조회유저.findOne({ 아이디: "주인장" });
+
+                    if (!타겟유저) {
+                        return res.json({ 성공: false, 메세지: "삭제할 대상 유저가 데이터베이스에 존재하지 않습니다." });
                     }
-                    await 유저.save();
-                    return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
 
-                    // const 타겟유저 = await 조회유저.findOne({ 아이디: "주인장" });
+                    await 타겟유저.deleteOne();
 
-                    // if (!타겟유저) {
-                    //     return res.json({ 성공: false, 메세지: "삭제할 대상 유저가 데이터베이스에 존재하지 않습니다." });
-                    // }
+                    const 타겟서브 = await 유저서브.findOne({ 아이디: "주인장" });
+                    if (타겟서브) {
+                        await 타겟서브.deleteOne();
+                    }
 
-                    // await 타겟유저.deleteOne();
-
-                    // const 타겟서브 = await 유저서브.findOne({ 아이디: "주인장" });
-                    // if (타겟서브) {
-                    //     await 타겟서브.deleteOne();
-                    // }
-
-                    // return res.json({
-                    //     성공: true,
-                    //     메세지: "주인장 계정이 삭제되었습니다."
-                    // });
+                    return res.json({
+                        성공: true,
+                        메세지: "주인장 계정이 삭제되었습니다."
+                    });
 
                     // const 대상유저들 = await 조회유저.find({ 골드: 9999 }, '아이디');
 
