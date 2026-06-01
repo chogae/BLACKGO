@@ -988,58 +988,9 @@ app.post('/api', limiter, async (req, res) => {
                 }
                 return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, 유저들 });
 
-            // case '전당조회':
-            //     try {
-            //         const 모든유저들 = await 조회유저.find({}).lean();
-
-            //         if (!유저.주인장) {
-            //             유저들 = 모든유저들
-            //                 .filter(u => !삭제대상아이디들.includes(u.아이디) && u.주인장 !== 1)
-            //                 .map(u => ({
-            //                     아이디: u.아이디,
-            //                     전투력: u.전투력,
-            //                     모험: {
-            //                         악마성: u.모험?.악마성,
-            //                         최고생존일수: u.모험?.최고생존일수
-            //                     }
-            //                 }))
-            //                 .sort((a, b) => {
-            //                     if ((b.모험?.악마성 || 0) !== (a.모험?.악마성 || 0)) {
-            //                         return (b.모험?.악마성 || 0) - (a.모험?.악마성 || 0);
-            //                     }
-            //                     return (b.모험?.최고생존일수 || 0) - (a.모험?.최고생존일수 || 0);
-            //                 });
-            //         } else {
-            //             const 현재접속시 = Math.floor(Date.now() / 3600000);
-            //             const 제한접속시 = 현재접속시 - 22;
-
-            //             유저들 = 모든유저들
-            //                 .filter(u => !삭제대상아이디들.includes(u.아이디) && u.접속시 >= 제한접속시 && u.주인장 !== 1)
-            //                 .map(u => ({
-            //                     아이디: u.아이디,
-            //                     전투력: u.전투력,
-            //                     모험: {
-            //                         악마성: u.모험?.악마성,
-            //                         최고생존일수: u.모험?.최고생존일수
-            //                     }
-            //                 }))
-            //                 .sort((a, b) => {
-            //                     if ((b.모험?.악마성 || 0) !== (a.모험?.악마성 || 0)) {
-            //                         return (b.모험?.악마성 || 0) - (a.모험?.악마성 || 0);
-            //                     }
-            //                     return (b.모험?.최고생존일수 || 0) - (a.모험?.최고생존일수 || 0);
-            //                 });
-            //         }
-
-            //         return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, 유저들 });
-            //     } catch (에러) {
-            //         return res.status(500).json({ 성공: false, 메세지: "서버 오류가 발생했습니다." });
-            //     }
-
             case '악성유저조회':
                 if (!유저.주인장) return res.json({ 성공: false, 메세지: `주인장 아니면 돌아가소` });
 
-                // const 대상유저 = await 조회유저.findOne({ 아이디: 데이터.악성유저 }, { 접속IP: 1, 아이디: 1 }).lean();
                 const 대상유저 = await 조회유저.findOne({ 아이디: 데이터.악성유저 }).lean();
                 if (대상유저) {
                     메세지 = `${데이터.악성유저}의 IP: ${대상유저.접속IP || 'IP 정보 없음'}`;
@@ -1047,6 +998,7 @@ app.post('/api', limiter, async (req, res) => {
                     메세지 = '해당 유저를 찾을 수 없습니다.';
                 }
 
+                console.log(대상유저.n일차);
                 return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, 유저들 });
 
 
@@ -1642,11 +1594,37 @@ app.post('/api', limiter, async (req, res) => {
                 }
 
                 try {
-                    유저.n일차 = 11;
-                    // 유저.유물.find(a => a.이름 === `드림캐처`).활성 = 0;
-                    // 유저.유물.find(a => a.이름 === `드림캐처`).등급 = 1;
-                    await 유저.save();
-                    return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
+                    const 결과 = await 유저서브.updateOne(
+                        { 아이디: `gagl` }, // 필터 조건: 선택한 유저의 아이디
+                        {
+                            $push: {
+                                우편함: {
+                                    이름: `배터리`,
+                                    내용: `1`,
+                                    수량: Number(2), // 숫자로 형변환
+                                    날짜: 날짜,
+                                    요일: 요일,
+                                    시각: 시각,
+                                }
+                            }
+                        }
+                    );
+
+                    if (결과.matchedCount === 0) {
+                        return res.json({ 성공: false, 메세지: "해당 유저를 찾을 수 없습니다." });
+                    }
+
+                    return res.json({
+                        성공: true,
+                        메세지: `배송 완료`
+                    });
+
+
+                    // 유저.n일차 = 11;
+                    // // 유저.유물.find(a => a.이름 === `드림캐처`).활성 = 0;
+                    // // 유저.유물.find(a => a.이름 === `드림캐처`).등급 = 1;
+                    // await 유저.save();
+                    // return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
 
                     // const 타겟유저 = await 조회유저.findOne({ 아이디: "주인장" });
 

@@ -239,9 +239,10 @@ export const 스타일 = {
         position: 'absolute',
         top: '0px',
         right: '0px',
+        width: '6px',           // 🌟 가로 크기 축소 (더 줄이고 싶으면 5px)
+        height: '6px',          // 🌟 세로 크기 축소 (가로와 똑같은 값 필수)
         backgroundColor: '#FF0000',
         borderRadius: '50%',
-        display: 'none'
     },
     메뉴: {
         position: 'absolute',
