@@ -46,7 +46,7 @@ const 유저스키마 = new mongoose.Schema({
     유물: [{
         이름: { type: String, required: true },
         활성: { type: Number, default: 0 },
-        등급: { type: Number, default: 0 },
+        등급: { type: Number, default: 1 },
         효과: [],
     }],
 

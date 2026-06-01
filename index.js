@@ -298,6 +298,9 @@ app.post('/api', limiter, async (req, res) => {
 
 
                 //유물추가
+                const 드림캐처 = 유저.유물.find(유물 => 유물.이름 === `드림캐처`);
+                if (!드림캐처) 유저.유물.push({ 이름: `드림캐처`, });
+
                 const 룬검 = 유저.유물.find(유물 => 유물.이름 === `룬검`);
                 if (!룬검) 유저.유물.push({ 이름: `룬검`, });
 
@@ -311,10 +314,25 @@ app.post('/api', limiter, async (req, res) => {
                 if (!헵타그램) 유저.유물.push({ 이름: `헵타그램`, });
 
                 if (유저.모험.악마성 >= 6) {
-                    const 헵타그램 = 유저.유물.find(유물 => 유물.이름 === `헵타그램`);
                     if (헵타그램 && !헵타그램.활성) {
                         헵타그램.활성 = 1;
                         메세지 = `유물 "헵타그램"를 획득했습니다`;
+                    }
+                }
+
+                if (유저.n일차 >= 3) {
+                    if (드림캐처) {
+                        if (!드림캐처.활성) {
+                            드림캐처.활성 = 1;
+                            메세지 = `드림캐처획득`;
+                        }
+
+                        const 계산된등급 = Math.floor(Math.log(유저.n일차) / Math.log(3));
+
+                        if (계산된등급 > 드림캐처.등급) {
+                            드림캐처.등급 = 계산된등급;
+                            메세지 = `유물 "드림캐처"가 ${등급테이블[계산된등급].등급}(으)로 진화했습니다!`;
+                        }
                     }
                 }
 
@@ -1451,6 +1469,34 @@ app.post('/api', limiter, async (req, res) => {
                 return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
 
 
+            case '배율소탕':
+                if (유저.배터리 < 10) {
+                    return res.json({ 성공: false, 메세지: `배터리가 부족합니다` });
+                }
+
+                획득보상 = 블랙공식(1, 숫자뽑기(27, 33), 유저.모험.악마성 - 1, 0, 1.03) * 70;
+                if (보상 === `골드`) {
+                    유저.골드 += 획득보상;
+                }
+                if (보상 === `스톤`) {
+                    유저.스톤 += 획득보상;
+                }
+                if (보상 === `양피지`) {
+                    유저.양피지 += 획득보상;
+                }
+                if (보상 === `다이아`) {
+                    유저.다이아 += 획득보상;
+                }
+
+                메세지 = `소탕보상 ${보상}+${획득보상} 획득!`;
+
+                유저.배터리 -= 10;
+                유저스탯계산(유저);
+
+                await 유저.save();
+                return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
+
+
             case '우편보내기':
 
                 if (!유저.주인장) {
@@ -1591,30 +1637,29 @@ app.post('/api', limiter, async (req, res) => {
                 }
 
                 try {
-                    // for (const [키, 값] of Object.entries(유저.특성)) {
-                    //     유저.특성[키] = 0;
-                    //     console.log(`${키}: ${값}`);
+                    유저.n일차 = 11;
+                    // 유저.유물.find(a => a.이름 === `드림캐처`).활성 = 0;
+                    // 유저.유물.find(a => a.이름 === `드림캐처`).등급 = 1;
+                    await 유저.save();
+                    return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
+
+                    // const 타겟유저 = await 조회유저.findOne({ 아이디: "주인장" });
+
+                    // if (!타겟유저) {
+                    //     return res.json({ 성공: false, 메세지: "삭제할 대상 유저가 데이터베이스에 존재하지 않습니다." });
                     // }
-                    // await 유저.save();
-                    // return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
 
-                    const 타겟유저 = await 조회유저.findOne({ 아이디: "주인장" });
+                    // await 타겟유저.deleteOne();
 
-                    if (!타겟유저) {
-                        return res.json({ 성공: false, 메세지: "삭제할 대상 유저가 데이터베이스에 존재하지 않습니다." });
-                    }
+                    // const 타겟서브 = await 유저서브.findOne({ 아이디: "주인장" });
+                    // if (타겟서브) {
+                    //     await 타겟서브.deleteOne();
+                    // }
 
-                    await 타겟유저.deleteOne();
-
-                    const 타겟서브 = await 유저서브.findOne({ 아이디: "주인장" });
-                    if (타겟서브) {
-                        await 타겟서브.deleteOne();
-                    }
-
-                    return res.json({
-                        성공: true,
-                        메세지: "주인장 계정이 삭제되었습니다."
-                    });
+                    // return res.json({
+                    //     성공: true,
+                    //     메세지: "주인장 계정이 삭제되었습니다."
+                    // });
 
                     // const 대상유저들 = await 조회유저.find({ 골드: 9999 }, '아이디');
 
