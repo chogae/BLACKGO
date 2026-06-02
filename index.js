@@ -1667,104 +1667,106 @@ app.post('/api', limiter, async (req, res) => {
                     });
                 }
 
-            case '점검중':
+            case '주인장전용':
                 if (!유저.주인장) {
                     return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
                 }
 
-                try {
+                if (데이터.전용요청 === ``) {
+
+                }
+
+                if (데이터.전용요청 === `그때그때`) {
+
+                }
+
+                if (데이터.전용요청 === `점검중`) {
                     const 결과 = await 유저서브.updateMany(
                         {}, // 빈 객체는 모든 문서를 의미함
                         { $set: { 점검중: 1 } }
                     );
-
-                    return res.json({
-                        성공: true,
-                        메세지: `모든유저가 점검중 되었습니다 (수정된 문서 수: ${결과.modifiedCount})`
-                    });
-                } catch (에러) {
-                    return res.status(500).json({
-                        성공: false,
-                        메세지: "서버 오류가 발생했습니다."
-                    });
+                    메세지: `모든유저가 점검중 되었습니다 (수정된 문서 수: ${결과.modifiedCount})`
                 }
 
-            case '점검해제':
-
-                if (!유저.주인장) {
-                    return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
-                }
-
-                try {
+                if (데이터.전용요청 === `점검해제`) {
                     const 결과 = await 유저서브.updateMany(
                         {}, // 빈 객체는 모든 문서를 의미함
                         { $set: { 점검중: 0 } }
                     );
-
-                    return res.json({
-                        성공: true,
-                        메세지: `모든유저의 점검이 해제되었습니다 (수정된 문서 수: ${결과.modifiedCount})`
-                    });
-                } catch (에러) {
-                    return res.status(500).json({
-                        성공: false,
-                        메세지: "서버 오류가 발생했습니다."
-                    });
+                    메세지: `모든유저의 점검이 해제되었습니다 (수정된 문서 수: ${결과.modifiedCount})`
                 }
 
-            case '업데이트':
-
-                if (!유저.주인장) {
-                    return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
-                }
-
-                try {
-                    const 결과 = await 유저서브.updateMany(
-                        {}, // 빈 객체는 모든 문서를 의미함
-                        { $set: { 업데이트: 1 } }
-                    );
-
-                    return res.json({
-                        성공: true,
-                        메세지: `모든유저가 업데이트 되었습니다 (수정된 문서 수: ${결과.modifiedCount})`
-                    });
-                } catch (에러) {
-                    return res.status(500).json({
-                        성공: false,
-                        메세지: "서버 오류가 발생했습니다."
-                    });
-                }
-
-            case '업데이트해제':
-
-                if (!유저.주인장) {
-                    return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
-                }
-
-                try {
+                if (데이터.전용요청 === `업데이트해제`) {
                     const 결과 = await 유저서브.updateMany(
                         {}, // 빈 객체는 모든 문서를 의미함
                         { $set: { 업데이트: 0 } }
                     );
-
-                    return res.json({
-                        성공: true,
-                        메세지: `모든유저가 업데이트 해제되었습니다 (수정된 문서 수: ${결과.modifiedCount})`
-                    });
-                } catch (에러) {
-                    return res.status(500).json({
-                        성공: false,
-                        메세지: "서버 오류가 발생했습니다."
-                    });
+                    메세지: `모든유저가 업데이트 해제되었습니다 (수정된 문서 수: ${결과.modifiedCount})`
                 }
 
-            case '버그데이터삭제':
-
-                if (!유저.주인장) {
-                    return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
+                if (데이터.전용요청 === `업데이트`) {
+                    const 결과 = await 유저서브.updateMany(
+                        {}, // 빈 객체는 모든 문서를 의미함
+                        { $set: { 업데이트: 1 } }
+                    );
+                    메세지: `모든유저가 업데이트 되었습니다 (수정된 문서 수: ${결과.modifiedCount})`
                 }
 
-                try {
+                if (데이터.전용요청 === `모든계정삭제`) {
+                    const 대상아이디리스트 = [
+                        // '주인장',
+                    ];
+
+                    if (대상아이디리스트.length === 0) {
+                        return res.status(400).json({ 성공: false, 메세지: "삭제할 대상 아이디 리스트가 비어있습니다." });
+                    }
+
+                    const 삭제대상유저들 = await 조회유저.find({
+                        아이디: { $in: 대상아이디리스트 },
+                    }).select('아이디');
+
+                    const 실제삭제할아이디들 = 삭제대상유저들.map(u => u.아이디);
+
+                    if (실제삭제할아이디들.length === 0) {
+                        return res.json({ 성공: false, 메세지: "삭제할 대상 유저가 데이터베이스에 존재하지 않습니다." });
+                    }
+
+                    const 결과 = await 조회유저.deleteMany({ 아이디: { $in: 실제삭제할아이디들 } });
+
+                    await 유저서브.deleteMany({ 아이디: { $in: 실제삭제할아이디들 } });
+                }
+
+                if (데이터.전용요청 === `악성유저삭제`) {
+                    if (차단IP목록.length === 0) {
+                        return res.status(400).json({ 성공: false, 메세지: "대상 IP 리스트가 비어있습니다." });
+                    }
+
+                    const IP정규식 = 차단IP목록.map(ip => new RegExp(ip));
+                    const 삭제대상유저들 = await 조회유저.find({
+                        접속IP: { $in: IP정규식 },
+                        주인장: { $ne: 1 }
+                    }).select('아이디');
+
+                    const 아이디리스트 = 삭제대상유저들.map(u => u.아이디);
+
+                    if (아이디리스트.length === 0) {
+                        return res.json({ 성공: false, 메세지: "삭제할 대상 유저가 없습니다." });
+                    }
+
+                    const 결과 = await 조회유저.deleteMany({ 아이디: { $in: 아이디리스트 } });
+
+                    await 유저서브.deleteMany({ 아이디: { $in: 아이디리스트 } });
+                }
+
+                if (데이터.전용요청 === `버전업`) {
+                    const 결과 = await 유저서브.updateMany(
+                        {}, // 빈 객체는 모든 문서를 의미함
+                        { $set: { 버전: 1 } }
+                    );
+                    메세지: `버전업 완료`;
+                }
+
+                if (데이터.전용요청 === `버그데이터삭제`) {
                     // 1. 모든 유저와 유저서브의 아이디 목록을 가져옴
                     const 모든유저아이디 = await 조회유저.distinct("아이디");
                     const 모든서브아이디 = await 유저서브.distinct("아이디");
@@ -1788,144 +1790,16 @@ app.post('/api', limiter, async (req, res) => {
                         const 결과 = await 유저서브.deleteMany({ 아이디: { $in: 삭제할서브아이디 } });
                         삭제된서브수 = 결과.deletedCount;
                     }
-
-                    return res.json({
-                        성공: true,
-                        메세지: `데이터 정리를 완료. 삭제된 유저: ${삭제된유저수}명, 삭제된 서브: ${삭제된서브수}개`,
-                    });
-                } catch (에러) {
-                    return res.status(500).json({
-                        성공: false,
-                        메세지: "서버 오류가 발생했습니다."
-                    });
+                    메세지: `데이터 정리를 완료. 삭제된 유저: ${삭제된유저수}명, 삭제된 서브: ${삭제된서브수}개`;
                 }
 
-            case '버전업':
-
-                if (!유저.주인장) {
-                    return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
-                }
-
-                try {
-                    const 결과 = await 유저서브.updateMany(
-                        {}, // 빈 객체는 모든 문서를 의미함
-                        { $set: { 버전: 1 } }
-                    );
-
-                    return res.json({
-                        성공: true,
-                        메세지: `모든 유저의 버전을 1로 변경했습니다. (수정된 문서 수: ${결과.modifiedCount})`
-                    });
-                } catch (에러) {
-                    return res.status(500).json({
-                        성공: false,
-                        메세지: "서버 오류가 발생했습니다."
-                    });
-                }
+                return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지 });
 
 
-            case '악성유저삭제':
-                if (!유저.주인장) {
-                    return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
-                }
 
-                try {
-                    if (차단IP목록.length === 0) {
-                        return res.status(400).json({ 성공: false, 메세지: "대상 IP 리스트가 비어있습니다." });
-                    }
-
-                    const IP정규식 = 차단IP목록.map(ip => new RegExp(ip));
-                    const 삭제대상유저들 = await 조회유저.find({
-                        접속IP: { $in: IP정규식 },
-                        주인장: { $ne: 1 }
-                    }).select('아이디');
-
-                    const 아이디리스트 = 삭제대상유저들.map(u => u.아이디);
-
-                    if (아이디리스트.length === 0) {
-                        return res.json({ 성공: false, 메세지: "삭제할 대상 유저가 없습니다." });
-                    }
-
-                    const 결과 = await 조회유저.deleteMany({ 아이디: { $in: 아이디리스트 } });
-
-                    await 유저서브.deleteMany({ 아이디: { $in: 아이디리스트 } });
-
-                    return res.json({
-                        성공: true,
-                        메세지: `${결과.deletedCount}개의 계정이 삭제되었습니다. (대상 IP: ${차단IP목록.join(', ')})`
-                    });
-                } catch (에러) {
-                    return res.status(500).json({
-                        성공: false,
-                        메세지: "삭제 중 서버 오류가 발생했습니다."
-                    });
-                }
-
-            case '모든계정삭제':
-
-                if (!유저.주인장) {
-                    return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
-                }
-
-                try {
-                    const 대상아이디리스트 = [
-                        // '주인장',
-                    ];
-
-                    if (대상아이디리스트.length === 0) {
-                        return res.status(400).json({ 성공: false, 메세지: "삭제할 대상 아이디 리스트가 비어있습니다." });
-                    }
-
-                    const 삭제대상유저들 = await 조회유저.find({
-                        아이디: { $in: 대상아이디리스트 },
-                    }).select('아이디');
-
-                    const 실제삭제할아이디들 = 삭제대상유저들.map(u => u.아이디);
-
-                    if (실제삭제할아이디들.length === 0) {
-                        return res.json({ 성공: false, 메세지: "삭제할 대상 유저가 데이터베이스에 존재하지 않습니다." });
-                    }
-
-                    const 결과 = await 조회유저.deleteMany({ 아이디: { $in: 실제삭제할아이디들 } });
-
-                    await 유저서브.deleteMany({ 아이디: { $in: 실제삭제할아이디들 } });
-
-                    return res.json({
-                        성공: true,
-                        메세지: `${결과.deletedCount}개의 계정이 삭제되었습니다. (대상 아이디: ${실제삭제할아이디들.join(', ')})`
-                    });
-                } catch (에러) {
-                    return res.status(500).json({
-                        성공: false,
-                        메세지: "삭제 중 서버 오류가 발생했습니다."
-                    });
-                }
-
-            // case '모든계정삭제':
-
-            //     if (!유저.주인장) {
-            //         return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
-            //     }
-
-            //     try {
-            //         const 결과 = await 조회유저.deleteMany({});
-            //         await 유저서브.deleteMany({});
-
-            //         return res.json({
-            //             성공: true,
-            //             메세지: `총 ${결과.deletedCount}개의 모든 계정이 삭제되었습니다.`
-            //         });
-
-            //     } catch (에러) {
-            //         return res.status(500).json({
-            //             성공: false,
-            //             메세지: "삭제 중 서버 오류가 발생했습니다."
-            //         });
-            //     }
 
 
             default:
-
                 return res.status(400).json({ 성공: false, 메세지: "잘못된 요청" });
         }
     } catch (에러) {
@@ -2903,7 +2777,7 @@ function 전투시뮬레이션(유저, 상대) {
         return acc;
     }, {});
 
-
+    let 선공권판정 = 0;
     while (유저현재체력 > 0 && 상대현재체력 > 0) {
         턴++;
         로그[턴] = [];
@@ -3169,7 +3043,10 @@ function 전투시뮬레이션(유저, 상대) {
         let 행동순서 = [];
 
         const 유저저지불가 = 유저스킬["저지 불가"]?.레벨 ? 운빨정수.대박 : 0;
-        if (확률판정(40 + (유저.모험.속력 * 0.1) + 유저저지불가)) {
+
+        if (!선공권판정) 선공권판정 = 확률판정(40 + (유저.모험.속력 * 0.1) + 유저저지불가) ? 1 : 2;
+
+        if (선공권판정 === 1) {
             행동순서 = [
                 { 공격자: 유저정보, 수비자: 상대정보 }, //선턴
                 { 공격자: 상대정보, 수비자: 유저정보 }
