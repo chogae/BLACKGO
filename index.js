@@ -98,11 +98,15 @@ app.post('/api', limiter, async (req, res) => {
     const 날짜 = now.toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul" });
     const 요일 = now.toLocaleDateString("ko-KR", { weekday: "long", timeZone: "Asia/Seoul" });
     const 시각 = now.toLocaleTimeString("ko-KR", { timeZone: "Asia/Seoul" });
-
-    const ms = now.getTime();
+    const KST_OFFSET = 9 * 60 * 60 * 1000;
+    const ms = now.getTime() + KST_OFFSET;
     const 시 = Math.floor(ms / 3600000);
     const 분 = Math.floor(ms / 60000);
     const 초 = Math.floor(ms / 1000);
+
+    const targetDate = new Date("2026-06-08T00:00:00");
+    const targetMs = targetDate.getTime() + KST_OFFSET;
+    const target시 = Math.floor(targetMs / 3600000);
 
     try {
         if (유형 !== '로그인' && 유형 !== '회원가입') {
@@ -266,11 +270,11 @@ app.post('/api', limiter, async (req, res) => {
                     업데이트 = 1;
                 }
 
-                //일일보상
+                //하루한번
                 if (유저.접속날짜 !== 날짜) {
                     유저.n일차++;
-                    const 오늘요일숫자 = new Date().getDay();
-                    if (오늘요일숫자 === 0) {
+
+                    if (요일 === `일요일`) {
                         서브.우편함.push({
                             이름: `배터리`,
                             내용: `일요일이다! 배터리 충전!!`,
@@ -295,10 +299,7 @@ app.post('/api', limiter, async (req, res) => {
                 유저.접속시 = 시;
                 유저.접속분 = 분;
                 유저.접속초 = 초;
-                // let 마지막접속IP = 유저.접속IP;
-                // if (마지막접속IP !== 접속IP) 업데이트 = 1;
                 유저.접속IP = 접속IP;
-
 
                 //유물추가
                 const 드림캐처 = 유저.유물.find(유물 => 유물.이름 === `드림캐처`);
@@ -1522,132 +1523,6 @@ app.post('/api', limiter, async (req, res) => {
                 return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
 
 
-            case '그때그때':
-                if (!유저.주인장) {
-                    return res.status(403).json({ 성공: false, 메세지: "권한이 없습니다. 주인장만 가능합니다." });
-                }
-
-                try {
-                    // const 결과 = await 유저서브.updateOne(
-                    //     { 아이디: `gagl` }, // 필터 조건: 선택한 유저의 아이디
-                    //     {
-                    //         $push: {
-                    //             우편함: {
-                    //                 이름: `배터리`,
-                    //                 내용: `1`,
-                    //                 수량: Number(2), // 숫자로 형변환
-                    //                 날짜: 날짜,
-                    //                 요일: 요일,
-                    //                 시각: 시각,
-                    //             }
-                    //         }
-                    //     }
-                    // );
-
-                    // if (결과.matchedCount === 0) {
-                    //     return res.json({ 성공: false, 메세지: "해당 유저를 찾을 수 없습니다." });
-                    // }
-
-                    // return res.json({
-                    //     성공: true,
-                    //     메세지: `배송 완료`
-                    // });
-
-                    유저.양피지 = 999999999;
-                    // 유저.n일차 = 11;
-                    // 유저.유물.find(a => a.이름 === `드림캐처`).활성 = 0;
-                    // 유저.유물.find(a => a.이름 === `드림캐처`).등급 = 1;
-                    await 유저.save();
-                    return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
-
-                    // const 타겟유저 = await 조회유저.findOne({ 아이디: "주인장" });
-
-                    // if (!타겟유저) {
-                    //     return res.json({ 성공: false, 메세지: "삭제할 대상 유저가 데이터베이스에 존재하지 않습니다." });
-                    // }
-
-                    // await 타겟유저.deleteOne();
-
-                    // const 타겟서브 = await 유저서브.findOne({ 아이디: "주인장" });
-                    // if (타겟서브) {
-                    //     await 타겟서브.deleteOne();
-                    // }
-
-                    // return res.json({
-                    //     성공: true,
-                    //     메세지: "주인장 계정이 삭제되었습니다."
-                    // });
-
-                    // const 대상유저들 = await 조회유저.find({ 골드: 9999 }, '아이디');
-
-                    // if (대상유저들.length === 0) {
-                    //     return res.json({ 성공: false, 메세지: "다이아가 9999인 유저를 찾을 수 없습니다." });
-                    // }
-
-                    // const 아이디목록 = 대상유저들.map(u => u.아이디);
-                    // console.log(아이디목록);
-
-                    // return res.json({
-                    //     성공: true,
-                    //     메세지: `다이아가 9999인 유저를 총 ${대상유저들.length}명 찾았습니다.`,
-                    // });
-
-                    // 유저.골드 += 9999999999999;
-                    // 유저.다이아 += 9999999999999;
-                    // 유저.양피지 += 9999999999999;
-                    // 유저.스톤 += 9999999999999;
-                    // 유저.배터리 += 9999999999999;
-
-                    // 유저.장비도감.릴리트 = [1, 1, 1];
-                    // 유저.장비도감.디아블로 = [1, 1, 1];
-                    // 유저.장비도감.레비아탄 = [1, 1, 1];
-                    // 유저.장비도감.벨제부브 = [1, 1, 1];
-                    // 유저.장비도감.사탄 = [1, 1, 1];
-                    // 유저.장비도감.루시퍼 = [1, 1, 1];
-                    // 유저.장비도감.베히모스 = [1, 1, 1];
-                    // 유저.장비도감.아바돈 = [1, 1, 1];
-                    // 유저.장비도감.바론 = [1, 1, 1];
-
-                    // await 유저.save();
-
-                    // return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
-
-
-                    // const 타겟유저 = await 조회유저.findOne({ 아이디: "gagl" });
-
-                    // if (!타겟유저) {
-                    //     return res.json({ 성공: false, 메세지: "해당 아이디를 가진 유저를 찾을 수 없습니다." });
-                    // }
-
-                    // 타겟유저.골드 = 9999;
-                    // 타겟유저.다이아 = 9999;
-
-                    // await 타겟유저.save();
-
-                    // return res.json({
-                    //     성공: true,
-                    //     메세지: `${타겟유저.아이디} 유저의 골드와 다이아가 세팅되었습니다.`
-                    // });
-
-                    // const 모든유저 = await 조회유저.find({});
-
-                    // for (const 개별유저 of 모든유저) {
-                    //     개별유저.골드 = 9999;
-                    //     개별유저.다이아 = 9999;
-                    //     await 개별유저.save();
-                    // }
-
-                    // return res.json({
-                    //     성공: true,
-                    //     메세지: `모든 유저(${모든유저.length}명)의 골드와 다이아가 세팅되었습니다.`
-                    // });
-
-                } catch (에러) {
-                    return res.status(500).json({
-                        성공: false,
-                        메세지: "서버 오류가 발생했습니다."
-                    });
-                }
 
             case '주인장전용':
                 if (!유저.주인장) {
@@ -1703,7 +1578,11 @@ app.post('/api', limiter, async (req, res) => {
                     // }
                     // 메세지 = `일반:${일반}, 레어:${레어}, 신화:${신화}, 고대:${고대} 획득!`;
                     // 유저스탯계산(유저);
+                    유저.스태미너 = 9999999;
+                    유저.다이아 = 9999999;
+                    유저.골드 = 9999999;
                     유저.양피지 = 9999999;
+                    유저.스톤 = 9999999;
                     await 유저.save();
                 }
 
@@ -2376,10 +2255,10 @@ function 유저스탯계산(유저) {
         });
     }
 
-    const 특성체력 = 블랙공식(0, 100, 유저.특성.체력, 0, 1.03);
-    const 특성공격력 = 블랙공식(0, 30, 유저.특성.공격력, 0, 1.03);
-    const 특성방어력 = 블랙공식(0, 10, 유저.특성.방어력, 0, 1.03);
-    const 특성속력 = 블랙공식(0, 10, 유저.특성.속력, 0, 1.03);
+    const 특성체력 = 블랙공식(0, 100, 유저.특성.체력, 0, 1.032);
+    const 특성공격력 = 블랙공식(0, 30, 유저.특성.공격력, 0, 1.032);
+    const 특성방어력 = 블랙공식(0, 10, 유저.특성.방어력, 0, 1.032);
+    const 특성속력 = 블랙공식(0, 10, 유저.특성.속력, 0, 1.032);
     초기값.체력 += 특성체력;
     초기값.공격력 += 특성공격력;
     초기값.방어력 += 특성방어력;
