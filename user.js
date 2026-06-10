@@ -78,9 +78,11 @@ const 유저스키마 = new mongoose.Schema({
         최고생존일수: { type: Number, default: 1 },
     },
 
+    일회용버프: [Number],
+
     모험: {
         ...정의.스탯스키마,
-        무한생존일수: { type: Number, default: 1 },
+        무한생존일수: { type: Number, default: 0 },
 
         //초기화x
         악마성: { type: Number, default: 1 },
