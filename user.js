@@ -59,6 +59,12 @@ const 유저스키마 = new mongoose.Schema({
     계정: {
         ...정의.스탯스키마,
     },
+    그루브: {
+        체력: { type: Number, default: 0 },
+        공격력: { type: Number, default: 0 },
+        방어력: { type: Number, default: 0 },
+        속력: { type: Number, default: 0 },
+    },
     어빌리티: [{
         이름: { type: String, default: "" },
         등급: { type: Number, default: 0 },
