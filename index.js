@@ -651,7 +651,7 @@ app.post('/api', limiter, async (req, res) => {
 
                         switch (배울스킬.이름) {
                             case `제드`:
-                                const 수리검스킬들 = 스킬데이터베이스.filter(s => s.효과.includes(`수리검`));
+                                const 수리검스킬들 = 스킬데이터베이스.filter(s => s.등급 === `일반` && s.효과.includes(`수리검`));
 
                                 for (const 스킬 of 수리검스킬들) {
                                     const 기존스킬 = 유저.모험.스킬.find(s => s.이름 === 스킬.이름);
