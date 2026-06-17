@@ -59,12 +59,13 @@ const 유저스키마 = new mongoose.Schema({
     계정: {
         ...정의.스탯스키마,
     },
+
     그루브: {
-        체력: { type: Number, default: 0 },
-        공격력: { type: Number, default: 0 },
-        방어력: { type: Number, default: 0 },
-        속력: { type: Number, default: 0 },
+        레벨: { type: Number, default: 0 },
+        카운트: { type: Number, default: 10 },
+        확률: { type: Number, default: 11 },
     },
+
     어빌리티: [{
         이름: { type: String, default: "" },
         등급: { type: Number, default: 0 },
@@ -114,7 +115,7 @@ const 유저스키마 = new mongoose.Schema({
         스킬: [{
             이름: { type: String },
             등급: { type: String },
-            레벨: { type: Number, default: 0 }
+            레벨: { type: Number, default: 0 },
         }],
 
         스킬뽑기: [{
