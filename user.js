@@ -125,6 +125,10 @@ const 유저스키마 = new mongoose.Schema({
         획득스킬: { type: String },
     },
 
+    기본체력: { type: Number, default: 0 },
+    기본공격력: { type: Number, default: 0 },
+    기본방어력: { type: Number, default: 0 },
+
     쪽박체력: { type: Number, default: 0 },
     쪽박공격력: { type: Number, default: 0 },
     쪽박방어력: { type: Number, default: 0 },
