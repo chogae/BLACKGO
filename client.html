@@ -854,16 +854,14 @@
                     모험화면풀자동.onclick = async (e) => {
                         e?.stopPropagation();
 
-                        if (유저?.주인장) {
-                            if (!유저?.배터리) {
-                                알림표시(`배터리가 부족합니다`);
-                                return;
-                            }
-
-                            풀자동 = true;
-
-                            모험화면새로하기.onclick(e);
+                        if (!유저?.배터리) {
+                            알림표시(`배터리가 부족합니다`);
+                            return;
                         }
+
+                        풀자동 = true;
+
+                        모험화면새로하기.onclick(e);
                     };
                 }
 
