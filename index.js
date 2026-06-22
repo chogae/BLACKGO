@@ -315,7 +315,7 @@ app.post('/api', limiter, async (req, res) => {
                 유저.접속분 = 분;
                 유저.접속초 = 초;
                 유저.접속IP = 접속IP;
-                
+
                 //유물추가
                 const 세잎클로버 = 유저.유물.find(유물 => 유물.이름 === `세잎클로버`);
                 if (!세잎클로버) 유저.유물.push({ 이름: `세잎클로버`, });
@@ -1144,7 +1144,7 @@ app.post('/api', limiter, async (req, res) => {
                 return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지 });
 
             case '일뽑기':
-                if (유저.다이아 < 300) {
+                if (유저.다이아 < 280) {
                     return res.json({ 성공: false, 메세지: `다이아가 부족합니다` });
                 }
 
@@ -1167,7 +1167,7 @@ app.post('/api', limiter, async (req, res) => {
                     });
                 }
 
-                유저.다이아 -= 300;
+                유저.다이아 -= 280;
 
                 유저스탯계산(유저);
 
@@ -1176,15 +1176,16 @@ app.post('/api', limiter, async (req, res) => {
                 return res.json({ 성공: true, 유저: { ...서브.toObject(), ...유저.toObject() }, 메세지, });
 
             case '십뽑기':
-                if (유저.다이아 < 2800) {
+                if (유저.다이아 < 280) {
                     return res.json({ 성공: false, 메세지: `다이아가 부족합니다` });
                 }
 
+                const 뽑기돌려 = Math.floor(유저.다이아 / 280);
                 let 일반 = 0;
                 let 레어 = 0;
                 let 신화 = 0;
                 let 고대 = 0;
-                for (let i = 0; i < 10; i++) {
+                for (let i = 0; i < 뽑기돌려; i++) {
                     const 뽑은유형 = 랜덤뽑기(Object.keys(장비데이터베이스));
                     const 뽑은장비 = 랜덤뽑기(장비데이터베이스[뽑은유형]);
                     const 뽑은등급 = 확률숫자뽑기(장비뽑기확률표);
@@ -1219,7 +1220,7 @@ app.post('/api', limiter, async (req, res) => {
 
                 }
 
-                유저.다이아 -= 2800;
+                유저.다이아 -= 뽑기돌려 * 280;
 
                 메세지 = `일반:${일반}, 레어:${레어}, 신화:${신화}, 고대:${고대} 획득!`;
                 유저스탯계산(유저);
