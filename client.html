@@ -741,13 +741,23 @@
                 객체생성(모험화면버튼박스, `모험화면새로하기`, 버튼, 테두리, 큰여백);
                 모험화면새로하기.innerHTML = `새로하기`;
                 모험화면새로하기.onclick = async (e) => {
-                    e?.stopPropagation();
+                    e?.stopPropagation(e);
 
                     if (유저?.모험.진행 && !풀자동) {
                         const 확인 = await 팝업(`
                         진행중인 모험이 있습니다<br>
                         초기화 후 새로운 모험을 시작하시겠습니까?`);
                         if (!확인) return;
+                    }
+
+                    if (풀자동) {
+                        풀자동 = false;
+                        const 확인 = await 팝업(`
+                        풀자동은 진행중인 모험을 포기한 뒤 실행가능합니다<br>
+
+                        `);
+                        if (!확인) return;
+                        return;
                     }
 
                     if (!유저?.배터리) {
@@ -852,7 +862,7 @@
                     }
 
                     모험화면풀자동.onclick = async (e) => {
-                        e?.stopPropagation();
+                        e?.stopPropagation(e);
 
                         // const 확인 = await 팝업(`
                         // 풀자동 멈추는법<br>
@@ -868,9 +878,9 @@
                             return;
                         }
 
-                        풀자동 = true;
 
                         모험화면새로하기.onclick(e);
+                        풀자동 = true;
                     };
                 }
 
